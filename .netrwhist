@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =2
+let g:netrw_dirhist_2='/home/mrchu001/dev/burnside-configs/src/lib'
+let g:netrw_dirhist_1='/home/mrchu001/dev/burnside-configs/src'
+let g:netrw_dirhist_0='/home/mrchu001/dev/burnside-configs'
+let g:netrw_dirhist_9='/home/mrchu001/.config/nvim'
+let g:netrw_dirhist_8='/home/mrchu001/.local/share/nvim/site/autoload'
+let g:netrw_dirhist_7='/home/mrchu001/.local/share/nvim'
+let g:netrw_dirhist_6='/home/mrchu001/.local/share/nvim/site'
+let g:netrw_dirhist_5='/home/mrchu001/.local/share/nvim/site/autoload'
+let g:netrw_dirhist_4='/home/mrchu001/.config/nvim'
+let g:netrw_dirhist_3='/home/mrchu001/dev/developer/src/wordpress/gulp/stardust'
