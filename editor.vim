@@ -28,6 +28,12 @@ set tabstop=4
 set backspace=eol,start,indent
 set laststatus=2
 
+" disabled for lightline
+set noshowmode
+
+" Show whitespace
+set list
+
 " Ignore files
 set wildignore+=*/node_modules/*,*.scssc,*/wp-includes/*,*/wp-admin/*,*/vendor/*
 
