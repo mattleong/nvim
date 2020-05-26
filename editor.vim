@@ -28,6 +28,9 @@ set tabstop=4
 set backspace=eol,start,indent
 set laststatus=2
 
+" relative line numbers
+set relativenumber
+
 " disabled for lightline
 set noshowmode
 
