@@ -27,16 +27,27 @@ map 0 ^
 map <C-x> :bd<cr>
 " buffer control
 map <C-j> :bp<cr>
-map <C-k> :bn<cr>
+map <C-l> :bn<cr>
 
 " FZF
 nmap <C-p> :GFiles<CR>
-nmap <C-l> :Buffers<CR>
+nmap <C-k> :Buffers<CR>
 nmap <leader>f :Ag<space>
 
 "COC
-nmap <leader>gd <Plug>(coc-definition)
-nmap <leader>gr <Plug>(coc-references)
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" tab / shift + tab
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " use <tab> for trigger completion and navigate to next complete item
 function! s:check_back_space() abort
@@ -49,10 +60,22 @@ inoremap <silent><expr> <TAB>
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 
-" vim-js
-let g:javascript_plugin_ngdoc = 1
 
-" Gitgutter
+let g:lightline = {
+  \ 'colorscheme': 'dogrun',
+  \ 'active': {
+  \   'left': [ [ 'mode', 'paste' ],
+  \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ],
+  \   'right': [['lineinfo'], ['percent'], ['cocstatus', 'fileencoding', 'filetype']]
+  \ },
+  \ 'component_function': {
+  \   'gitbranch': 'FugitiveHead',
+  \   'cocstatus': 'coc#status'
+  \ },
+  \ }
+
+" Use auocmd to force lightline update.
+autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
 " NERDTree
 let NERDTreeShowHidden = 1
@@ -69,17 +92,6 @@ if has("termguicolors")     " set true colors
 endif
 
 color dogrun
-
-let g:lightline = {
-  \ 'colorscheme': 'dogrun',
-  \ 'active': {
-  \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-  \ },
-  \ 'component_function': {
-  \   'gitbranch': 'FugitiveHead'
-  \ },
-\ }
 
 hi Normal guifg=NONE guibg=NONE ctermbg=none
 

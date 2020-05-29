@@ -35,7 +35,7 @@ set relativenumber
 set noshowmode
 
 " Show whitespace
-set list
+set list listchars=tab:❘-,trail:·,extends:»,precedes:«,nbsp:×
 
 " Ignore files
 set wildignore+=*/node_modules/*,*.scssc,*/wp-includes/*,*/wp-admin/*,*/vendor/*
@@ -66,4 +66,8 @@ set noswapfile
 set ruler
 set hidden
 set history=1000
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=300
 
