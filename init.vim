@@ -30,9 +30,14 @@ map <C-j> :bp<cr>
 map <C-l> :bn<cr>
 
 " FZF
-nmap <C-p> :GFiles<CR>
+" nmap <C-p> :GFiles<CR>
+command! FZFFloat FloatermNew fzf --preview 'bat --style=numbers --color=always {} | head -500'
+nmap <C-p> :FZFFloat <CR>
 nmap <C-k> :Buffers<CR>
 nmap <leader>f :Ag<space>
+
+" Floatterm
+let g:floaterm_keymap_toggle = '<leader>t'
 
 "COC
 " Use `[g` and `]g` to navigate diagnostics
@@ -44,6 +49,7 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+nmap <leader>rn <Plug>(coc-rename)
 
 " tab / shift + tab
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"

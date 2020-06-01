@@ -11,6 +11,8 @@ Plug 'wadackel/vim-dogrun'
 
 Plug 'itchyny/lightline.vim'
 
+Plug 'voldikss/vim-floaterm'
+
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 
