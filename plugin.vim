@@ -13,11 +13,12 @@ Plug 'itchyny/lightline.vim'
 
 Plug 'voldikss/vim-floaterm'
 
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
+Plug 'mhinz/vim-startify'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+
+Plug 'yuki-ycino/fzf-preview.vim'
 
 Plug 'tpope/vim-fugitive'
 

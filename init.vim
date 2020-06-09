@@ -29,12 +29,22 @@ map <C-x> :bd<cr>
 map <C-j> :bp<cr>
 map <C-l> :bn<cr>
 
+" Startify
+let g:startify_session_dir = '~/.config/nvim/sessions/'
+
 " FZF
-" nmap <C-p> :GFiles<CR>
-command! FZFFloat FloatermNew fzf --preview 'bat --style=numbers --color=always {} | head -500'
-nmap <C-p> :FZFFloat <CR>
-nmap <C-k> :Buffers<CR>
-nmap <leader>f :Ag<space>
+nmap <C-p> :FzfPreviewGitFiles<CR>
+nmap <C-k> :FzfPreviewBuffers<CR>
+nmap <leader>f :FzfPreviewProjectGrep<space>
+nmap <leader>q :FzfPreviewQuickFix<CR>
+
+" fzf git
+nmap <leader>gs :FzfPreviewGitStatus<CR>
+
+let g:fzf_preview_use_dev_icons = 1
+
+" why doesn't that work?
+" let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" exa --color=always'
 
 " Floatterm
 let g:floaterm_keymap_toggle = '<leader>t'
