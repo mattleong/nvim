@@ -32,19 +32,21 @@ map <C-l> :bn<cr>
 " Startify
 let g:startify_session_dir = '~/.config/nvim/sessions/'
 
-" FZF
-nmap <C-p> :FzfPreviewGitFiles<CR>
-nmap <C-k> :FzfPreviewBuffers<CR>
-nmap <leader>f :FzfPreviewProjectGrep<space>
-nmap <leader>q :FzfPreviewQuickFix<CR>
-
-" fzf git
+" vim clap
+nmap <C-p> :Clap gfiles<CR>
+nmap <C-k> :Clap buffers<CR>
+nmap <leader>f :Clap grep2<CR>
+nmap <leader>q :Clap quickfix<CR>
+nmap <leader>y :Clap yanks<CR>
 nmap <leader>gs :FzfPreviewGitStatus<CR>
 
-let g:fzf_preview_use_dev_icons = 1
-
+let g:clap_layout = { 'relative': 'editor' }
+let g:clap_provider_grep_opts = '--hidden -g "![.git/|node_modules]"'
+let g:clap_theme = 'dogrun'
+"
 " why doesn't that work?
 " let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" exa --color=always'
+" let g:fzf_preview_use_dev_icons = 1
 
 " Floatterm
 let g:floaterm_keymap_toggle = '<leader>t'
