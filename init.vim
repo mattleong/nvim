@@ -9,6 +9,7 @@ let mapleader = " "
 
 " NAVIGATION
 set cursorline
+"set cursorcolumn
 inoremap jj <ESC>
 
 " When editing a file, always jump to the last known cursor position.
@@ -33,11 +34,10 @@ map <C-l> :bn<cr>
 let g:startify_session_dir = '~/.config/nvim/sessions/'
 
 " vim clap
-nmap <C-p> :Clap gfiles<CR>
-nmap <C-k> :Clap buffers<CR>
-nmap <leader>f :Clap grep2<CR>
-nmap <leader>q :Clap quickfix<CR>
-nmap <leader>y :Clap yanks<CR>
+nmap <C-p> :FzfPreviewGitFiles<CR>
+nmap <C-k> :FzfPreviewBuffers<CR>
+nmap <leader>f :FzfPreviewProjectGrep<space>
+nmap <leader>q :FzfPreviewQuickFix<CR>
 nmap <leader>gs :FzfPreviewGitStatus<CR>
 
 let g:clap_layout = { 'relative': 'editor' }
@@ -45,7 +45,7 @@ let g:clap_provider_grep_opts = '--hidden -g "![.git/|node_modules]"'
 let g:clap_theme = 'dogrun'
 "
 " why doesn't that work?
-" let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" exa --color=always'
+" let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" ls -U --color'
 " let g:fzf_preview_use_dev_icons = 1
 
 " Floatterm
@@ -78,17 +78,22 @@ inoremap <silent><expr> <TAB>
       \ <SID>check_back_space() ? "\<TAB>" :
       \ coc#refresh()
 
+function! GitStatus()
+  let [a,m,r] = GitGutterGetHunkSummary()
+  return printf('+%d ~%d -%d', a, m, r)
+endfunction
 
 let g:lightline = {
   \ 'colorscheme': 'dogrun',
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'modified'] ],
-  \   'right': [['lineinfo'], ['percent'], ['cocstatus', 'fileencoding', 'filetype']]
+  \             [ 'gitbranch', 'readonly', 'filename', 'gitdir'] ],
+  \   'right': [['lineinfo'], ['percent'], ['cocstatus', 'modified', 'fileencoding', 'filetype']]
   \ },
   \ 'component_function': {
   \   'gitbranch': 'FugitiveHead',
-  \   'cocstatus': 'coc#status'
+  \   'cocstatus': 'coc#status',
+  \   'gitdir': 'GitStatus'
   \ },
   \ }
 
@@ -111,15 +116,10 @@ endif
 
 color dogrun
 
-hi Normal guifg=NONE guibg=NONE ctermbg=none
-
-
-
-" Airline
-" let g:airline_theme='darkscene'
-" let g:airline_extensions = ['coc']
-" let g:airline_powerline_fonts = 1
-"let g:airline#extensions#tabline#enabled = 1
+" allow transparency
+" hi Normal     ctermbg=NONE guibg=NONE
+" hi LineNr     ctermbg=NONE guibg=NONE
+" hi SignColumn ctermbg=NONE guibg=NONE
 
 " DT Session
 map <leader>dt :mks! ~/.config/nvim/sessions/dt.vim<CR>

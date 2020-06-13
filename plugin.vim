@@ -18,11 +18,7 @@ Plug 'mhinz/vim-startify'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-Plug 'liuchengxu/vim-clap', { 'do': ':Clap install-binary' }
-
 Plug 'yuki-ycino/fzf-preview.vim'
-
-Plug 'psliwka/vim-smoothie'
 
 Plug 'tpope/vim-fugitive'
 
