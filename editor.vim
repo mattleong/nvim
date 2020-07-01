@@ -1,5 +1,8 @@
 filetype plugin indent on
 
+" Remove trailing whitespaces
+autocmd BufWritePre * :%s/\s\+$//e
+
 " Update files written to outside of vim
 set autoread
 
@@ -62,10 +65,17 @@ set clipboard=unnamedplus
 " set mouse=a
 
 " do all work in memory, no swap file
-set noswapfile
 set ruler
 set hidden
 set history=1000
+set noswapfile
+"
+" Some servers have issues with backup files, see #649.
+set nobackup
+set nowritebackup
+
+" default 1000
+set timeoutlen=500
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.

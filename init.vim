@@ -1,11 +1,16 @@
 source ~/.config/nvim/plugin.vim
 source ~/.config/nvim/editor.vim
 
-" Remove trailing whitespaces
-autocmd BufWritePre * :%s/\s\+$//e
+" whichkey
+autocmd! User vim-which-key call which_key#register('<Space>', 'g:which_key_map')
+let g:which_key_map =  {}
+let g:which_key_map.s = {
+	\ 'name' : '+search',
+	\ }
 
 " Remap leader
-let mapleader = " "
+let mapleader = "\<Space>"
+let g:maplocalleader = ','
 
 " NAVIGATION
 set cursorline
@@ -33,35 +38,32 @@ map <C-l> :bn<cr>
 " Startify
 let g:startify_session_dir = '~/.config/nvim/sessions/'
 
-" vim clap
-nmap <C-p> :FzfPreviewGitFiles<CR>
-nmap <C-k> :FzfPreviewBuffers<CR>
-nmap <leader>f :FzfPreviewProjectGrep<space>
-nmap <leader>q :FzfPreviewQuickFix<CR>
-nmap <leader>gs :FzfPreviewGitStatus<CR>
+nnoremap <C-p> :FzfPreviewGitFiles<CR>
+nnoremap <C-k> :FzfPreviewBuffers<CR>
+nnoremap <leader>q :FzfPreviewQuickFix<CR>
+let g:which_key_map.q = 'quickfix'
+nnoremap <leader>sp :FzfPreviewProjectGrep<space>
+let g:which_key_map.s.p = 'fzf-project-grep'
 
-let g:clap_layout = { 'relative': 'editor' }
-let g:clap_provider_grep_opts = '--hidden -g "![.git/|node_modules]"'
-let g:clap_theme = 'dogrun'
-"
 " why doesn't that work?
-" let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" ls -U --color'
+" let g:fzf_preview_filelist_postprocess_command = 'exa -1' " Use exa
 " let g:fzf_preview_use_dev_icons = 1
+"let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" ls -U --color' " Use exa
 
 " Floatterm
-let g:floaterm_keymap_toggle = '<leader>t'
-
+nnoremap <silent><leader>t :FloatermToggle<CR>
+let g:which_key_map.t = 'terminal'
 "COC
 " Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nnoremap <silent> [g <Plug>(coc-diagnostic-prev)
+nnoremap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <leader>rn <Plug>(coc-rename)
+nnoremap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> gy <Plug>(coc-type-definition)
+nnoremap <silent> gi <Plug>(coc-implementation)
+nnoremap <silent> gr <Plug>(coc-references)
+nnoremap <leader>rn <Plug>(coc-rename)
 
 " tab / shift + tab
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -109,8 +111,6 @@ map <C-n> :NERDTreeToggle<CR>
 " Theme
 set t_Co=256
 if has("termguicolors")     " set true colors
-    set t_8f=\[[38;2;%lu;%lu;%lum
-    set t_8b=\[[48;2;%lu;%lu;%lum
     set termguicolors
 endif
 
@@ -126,4 +126,50 @@ map <leader>dt :mks! ~/.config/nvim/sessions/dt.vim<CR>
 
 " Escape terminal
 tnoremap <leader><Esc> <C-\><C-n>
+
+let g:which_key_map.g = {
+	\ 'name' : '+git',
+	\ 's' : ['FzfPreviewGitStatus', 'fzf-git-status'],
+	\ 'd' : ['Git diff', 'git-diff'],
+	\ }
+let g:which_key_map.r = { 'name' : '+refactor' }
+let g:which_key_map.w = { 'name' : '+windows' }
+let g:which_key_map.d = { 'name' : 'which_key_ignore' }
+let g:which_key_map.h = { 'name' : '+gitgutter' }
+let g:which_key_map.b = {
+      \ 'name' : '+buffer' ,
+      \ 'd' : ['bd'        , 'delete-buffer']   ,
+      \ 'f' : ['bfirst'    , 'first-buffer']    ,
+      \ 'h' : ['Startify'  , 'home-buffer']     ,
+      \ 'l' : ['blast'     , 'last-buffer']     ,
+      \ 'n' : ['bnext'     , 'next-buffer']     ,
+      \ 'p' : ['bprevious' , 'previous-buffer'] ,
+      \ '?' : ['FzfPreviewBuffers', 'fzf-buffer']      ,
+      \ }
+" Vim Whichkey
+" Git
+
+" window management
+let g:which_key_map['w'] = {
+      \ 'name' : '+windows' ,
+      \ 'w' : ['<C-W>w'     , 'other-window']          ,
+      \ 'd' : ['<C-W>c'     , 'delete-window']         ,
+      \ '-' : ['<C-W>s'     , 'split-window-below']    ,
+      \ '|' : ['<C-W>v'     , 'split-window-right']    ,
+      \ '2' : ['<C-W>v'     , 'layout-double-columns'] ,
+      \ 'h' : ['<C-W>h'     , 'window-left']           ,
+      \ 'j' : ['<C-W>j'     , 'window-below']          ,
+      \ 'l' : ['<C-W>l'     , 'window-right']          ,
+      \ 'k' : ['<C-W>k'     , 'window-up']             ,
+      \ 'H' : ['<C-W>5<'    , 'expand-window-left']    ,
+      \ 'J' : ['resize +5'  , 'expand-window-below']   ,
+      \ 'L' : ['<C-W>5>'    , 'expand-window-right']   ,
+      \ 'K' : ['resize -5'  , 'expand-window-up']      ,
+      \ '=' : ['<C-W>='     , 'balance-window']        ,
+      \ 's' : ['<C-W>s'     , 'split-window-horizontal']    ,
+      \ 'v' : ['<C-W>v'     , 'split-window-verical']    ,
+      \ '?' : ['Windows'    , 'fzf-window']            ,
+      \ }
+nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
 
