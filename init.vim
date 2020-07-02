@@ -4,9 +4,6 @@ source ~/.config/nvim/editor.vim
 " whichkey
 autocmd! User vim-which-key call which_key#register('<Space>', 'g:which_key_map')
 let g:which_key_map =  {}
-let g:which_key_map.s = {
-	\ 'name' : '+search',
-	\ }
 
 " Remap leader
 let mapleader = "\<Space>"
@@ -38,21 +35,16 @@ map <C-l> :bn<cr>
 " Startify
 let g:startify_session_dir = '~/.config/nvim/sessions/'
 
-nnoremap <C-p> :FzfPreviewGitFiles<CR>
+nnoremap <C-p> :FzfPreviewFromResources project_mru git<CR>
 nnoremap <C-k> :FzfPreviewBuffers<CR>
 nnoremap <leader>q :FzfPreviewQuickFix<CR>
-let g:which_key_map.q = 'quickfix'
 nnoremap <leader>sp :FzfPreviewProjectGrep<space>
-let g:which_key_map.s.p = 'fzf-project-grep'
 
 " why doesn't that work?
-" let g:fzf_preview_filelist_postprocess_command = 'exa -1' " Use exa
-" let g:fzf_preview_use_dev_icons = 1
-"let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" ls -U --color' " Use exa
+" let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" ls -U --color' " Use exa
 
 " Floatterm
 nnoremap <silent><leader>t :FloatermToggle<CR>
-let g:which_key_map.t = 'terminal'
 "COC
 " Use `[g` and `]g` to navigate diagnostics
 nnoremap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -60,7 +52,7 @@ nnoremap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
 nnoremap <silent> gd <Plug>(coc-definition)
-nnoremap <silent> gy <Plug>(coc-type-definition)
+nnoremap <silent> gt <Plug>(coc-type-definition)
 nnoremap <silent> gi <Plug>(coc-implementation)
 nnoremap <silent> gr <Plug>(coc-references)
 nnoremap <leader>rn <Plug>(coc-rename)
@@ -111,7 +103,7 @@ map <C-n> :NERDTreeToggle<CR>
 " Theme
 set t_Co=256
 if has("termguicolors")     " set true colors
-    set termguicolors
+	set termguicolors
 endif
 
 color dogrun
@@ -127,30 +119,64 @@ map <leader>dt :mks! ~/.config/nvim/sessions/dt.vim<CR>
 " Escape terminal
 tnoremap <leader><Esc> <C-\><C-n>
 
+" Vim Whichkey
+let g:which_key_map.d = { 'name' : 'which_key_ignore' }
+let g:which_key_map.h = { 'name' : 'which_key_ignore' }
+let g:which_key_map.q = 'quickfix'
+let g:which_key_map.t = 'terminal'
+
+let g:which_key_map.s = {
+	\ 'name' : '+search',
+	\ 'p' : 'search project',
+	\ }
+
+let g:which_key_map.p = {
+	\ 'name' : '+project',
+	\ 'r' : ['FzfPreviewMruFiles', 'recently used'],
+	\ 'w' : ['FzfPreviewMruFiles', 'recently written'],
+	\ 'd' : ['FzfPreviewDirectoryFiles', 'directory'],
+	\ }
+
 let g:which_key_map.g = {
 	\ 'name' : '+git',
-	\ 's' : ['FzfPreviewGitStatus', 'fzf-git-status'],
-	\ 'd' : ['Git diff', 'git-diff'],
+	\ 's' : ['FzfPreviewGitStatus', 'status'],
+	\ 'd' : ['Git diff', 'diff'],
+	\ 'b' : ['Gblame', 'blame'],
+	\ 'o' : ['Gbrowse', 'open in browser'],
 	\ }
-let g:which_key_map.r = { 'name' : '+refactor' }
-let g:which_key_map.w = { 'name' : '+windows' }
-let g:which_key_map.d = { 'name' : 'which_key_ignore' }
-let g:which_key_map.h = { 'name' : '+gitgutter' }
+
+let g:which_key_map.f = {
+	\ 'name' : '+file',
+	\ 's' : ['w', 'save'],
+	\ 'x' : ['wq', 'save + close'],
+	\ 'q' : ['q', 'quit'],
+	\ }
+
 let g:which_key_map.b = {
       \ 'name' : '+buffer' ,
-      \ 'd' : ['bd'        , 'delete-buffer']   ,
-      \ 'f' : ['bfirst'    , 'first-buffer']    ,
-      \ 'h' : ['Startify'  , 'home-buffer']     ,
-      \ 'l' : ['blast'     , 'last-buffer']     ,
-      \ 'n' : ['bnext'     , 'next-buffer']     ,
-      \ 'p' : ['bprevious' , 'previous-buffer'] ,
-      \ '?' : ['FzfPreviewBuffers', 'fzf-buffer']      ,
+      \ 'd' : ['bd'        , 'delete buffer']   ,
+      \ 'f' : ['bfirst'    , 'first buffer']    ,
+      \ 'h' : ['Startify'  , 'home buffer']     ,
+      \ 'l' : ['blast'     , 'last buffer']     ,
+      \ 'n' : ['bnext'     , 'next buffer']     ,
+      \ 'p' : ['bprevious' , 'previous buffer'] ,
+      \ '?' : ['FzfPreviewBuffers', 'preview buffers']      ,
+      \ 'a' : ['FzfPreviewAllBuffers', 'preview all buffers']      ,
       \ }
-" Vim Whichkey
-" Git
 
-" window management
-let g:which_key_map['w'] = {
+let g:which_key_map.c = {
+	\ 'name' : '+code',
+	\ 'r' : ['<Plug>(coc-rename)'     , 'rename']      ,
+	\ 'g' : {
+		\ 'name': '+goto',
+		\ 'd' : ['<Plug>(coc-definition)'     , 'definition']      ,
+		\ 't' : ['<Plug>(coc-type-definition)' , 'type-definition'] ,
+		\ 'i' : ['<Plug>(coc-implementation)' , 'implementation']  ,
+		\ 'r' : ['<Plug>(coc-references)' , 'references']  ,
+		\ },
+	\ }
+
+let g:which_key_map.w = {
       \ 'name' : '+windows' ,
       \ 'w' : ['<C-W>w'     , 'other-window']          ,
       \ 'd' : ['<C-W>c'     , 'delete-window']         ,
