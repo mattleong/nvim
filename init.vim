@@ -35,7 +35,7 @@ map <C-l> :bn<cr>
 " Startify
 let g:startify_session_dir = '~/.config/nvim/sessions/'
 
-nnoremap <C-p> :FzfPreviewFromResources project_mru git<CR>
+nnoremap <C-p> :FzfPreviewGitFiles<CR>
 nnoremap <C-k> :FzfPreviewBuffers<CR>
 nnoremap <leader>q :FzfPreviewQuickFix<CR>
 nnoremap <leader>sp :FzfPreviewProjectGrep<space>
@@ -122,6 +122,7 @@ tnoremap <leader><Esc> <C-\><C-n>
 " Vim Whichkey
 let g:which_key_map.d = { 'name' : 'which_key_ignore' }
 let g:which_key_map.h = { 'name' : 'which_key_ignore' }
+let g:which_key_map.r = { 'name' : 'which_key_ignore' }
 let g:which_key_map.q = 'quickfix'
 let g:which_key_map.t = 'terminal'
 
@@ -130,11 +131,17 @@ let g:which_key_map.s = {
 	\ 'p' : 'search project',
 	\ }
 
+let g:which_key_map.e = {
+	\ 'name' : 'reload vim',
+	\ 'p' : ':e!',
+	\ }
+
 let g:which_key_map.p = {
 	\ 'name' : '+project',
 	\ 'r' : ['FzfPreviewMruFiles', 'recently used'],
-	\ 'w' : ['FzfPreviewMruFiles', 'recently written'],
+	\ 'w' : ['FzfPreviewMrwFiles', 'recently written'],
 	\ 'd' : ['FzfPreviewDirectoryFiles', 'directory'],
+	\ 'g' : ['FzfPreviewGitFiles', 'git files'],
 	\ }
 
 let g:which_key_map.g = {
@@ -154,14 +161,25 @@ let g:which_key_map.f = {
 
 let g:which_key_map.b = {
       \ 'name' : '+buffer' ,
-      \ 'd' : ['bd'        , 'delete buffer']   ,
-      \ 'f' : ['bfirst'    , 'first buffer']    ,
-      \ 'h' : ['Startify'  , 'home buffer']     ,
-      \ 'l' : ['blast'     , 'last buffer']     ,
-      \ 'n' : ['bnext'     , 'next buffer']     ,
-      \ 'p' : ['bprevious' , 'previous buffer'] ,
-      \ '?' : ['FzfPreviewBuffers', 'preview buffers']      ,
-      \ 'a' : ['FzfPreviewAllBuffers', 'preview all buffers']      ,
+      \ 'd' : [':bd'        , 'delete buffer']   ,
+      \ 'f' : [':bfirst'    , 'first buffer']    ,
+      \ 'h' : [':Startify'  , 'home buffer']     ,
+      \ 'l' : [':blast'     , 'last buffer']     ,
+      \ 'n' : [':bnext'     , 'next buffer']     ,
+      \ 'p' : [':bprevious' , 'previous buffer'] ,
+      \ '?' : [':FzfPreviewBuffers', 'preview buffers']      ,
+      \ 'a' : [':FzfPreviewAllBuffers', 'preview all buffers']      ,
+      \ }
+
+let g:which_key_map.m = {
+      \ 'name' : '+bookmark' ,
+      \ 't' : [':CocCommand bookmark.toggle'        , 'create/delete bookmark']   ,
+      \ 'a' : [':CocCommand bookmark.annotate'        , 'create annotated bookmark']   ,
+      \ 'n' : [':CocCommand bookmark.next'        , 'next bookmark']   ,
+      \ 'p' : [':CocCommand bookmark.prev'        , 'prev bookmark']   ,
+      \ 'c' : [':CocCommand bookmark.clearForCurrentFile'        , 'clear bookmarks in file']   ,
+      \ 'C' : [':CocCommand bookmark.clearForAllFiles'        , 'clear all bookmarks']   ,
+      \ 'l' : [':CocList bookmark'        , 'list bookmarks']   ,
       \ }
 
 let g:which_key_map.c = {
@@ -177,25 +195,28 @@ let g:which_key_map.c = {
 	\ }
 
 let g:which_key_map.w = {
-      \ 'name' : '+windows' ,
-      \ 'w' : ['<C-W>w'     , 'other-window']          ,
-      \ 'd' : ['<C-W>c'     , 'delete-window']         ,
-      \ '-' : ['<C-W>s'     , 'split-window-below']    ,
-      \ '|' : ['<C-W>v'     , 'split-window-right']    ,
-      \ '2' : ['<C-W>v'     , 'layout-double-columns'] ,
-      \ 'h' : ['<C-W>h'     , 'window-left']           ,
-      \ 'j' : ['<C-W>j'     , 'window-below']          ,
-      \ 'l' : ['<C-W>l'     , 'window-right']          ,
-      \ 'k' : ['<C-W>k'     , 'window-up']             ,
-      \ 'H' : ['<C-W>5<'    , 'expand-window-left']    ,
-      \ 'J' : ['resize +5'  , 'expand-window-below']   ,
-      \ 'L' : ['<C-W>5>'    , 'expand-window-right']   ,
-      \ 'K' : ['resize -5'  , 'expand-window-up']      ,
-      \ '=' : ['<C-W>='     , 'balance-window']        ,
-      \ 's' : ['<C-W>s'     , 'split-window-horizontal']    ,
-      \ 'v' : ['<C-W>v'     , 'split-window-verical']    ,
-      \ '?' : ['Windows'    , 'fzf-window']            ,
+      \ 'name' : '+window' ,
+      \ 'w' : ['<C-W>w'     , 'other window']          ,
+      \ 'd' : ['<C-W>c'     , 'delete window']         ,
+      \ 's' : ['<C-W>s'     , 'split below']    ,
+      \ 'v' : ['<C-W>v'     , 'split right']    ,
+      \ 'h' : ['<C-W>h'     , 'window left']           ,
+      \ 'j' : ['<C-W>j'     , 'window below']          ,
+      \ 'l' : ['<C-W>l'     , 'window right']          ,
+      \ 'k' : ['<C-W>k'     , 'window up']             ,
+      \ 'H' : ['<C-W>5<'    , 'expand window left']    ,
+      \ 'J' : [':resize +5'  , 'expand window below']   ,
+      \ 'L' : ['<C-W>5>'    , 'expand window right']   ,
+      \ 'K' : [':resize -5'  , 'expand window up']      ,
+      \ '=' : ['<C-W>='     , 'balance window']        ,
+      \ '?' : [':Windows'    , 'fzf-window']            ,
       \ }
 nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
+
+let g:which_key_hspace = 1
+let g:which_key_use_floating_win = 1
+let g:which_key_floating_relative_win = 1
+let g:which_key_floating_opts = { 'width': '100', 'row': '1' }
+let g:which_key_sort_horizontal = 1
 
