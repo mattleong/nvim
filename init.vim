@@ -37,8 +37,6 @@ let g:startify_session_dir = '~/.config/nvim/sessions/'
 
 nnoremap <C-p> :FzfPreviewGitFiles<CR>
 nnoremap <C-k> :FzfPreviewBuffers<CR>
-nnoremap <leader>q :FzfPreviewQuickFix<CR>
-nnoremap <leader>sp :FzfPreviewProjectGrep<space>
 
 " why doesn't that work?
 " let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" ls -U --color' " Use exa
@@ -47,15 +45,15 @@ nnoremap <leader>sp :FzfPreviewProjectGrep<space>
 nnoremap <silent><leader>t :FloatermToggle<CR>
 "COC
 " Use `[g` and `]g` to navigate diagnostics
-nnoremap <silent> [g <Plug>(coc-diagnostic-prev)
-nnoremap <silent> ]g <Plug>(coc-diagnostic-next)
+map <silent> [g <Plug>(coc-diagnostic-prev)
+map <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
-nnoremap <silent> gd <Plug>(coc-definition)
-nnoremap <silent> gt <Plug>(coc-type-definition)
-nnoremap <silent> gi <Plug>(coc-implementation)
-nnoremap <silent> gr <Plug>(coc-references)
-nnoremap <leader>rn <Plug>(coc-rename)
+map <silent> gd <Plug>(coc-definition)
+map <silent> gt <Plug>(coc-type-definition)
+map <silent> gi <Plug>(coc-implementation)
+map <silent> gr <Plug>(coc-references)
+map <leader>rn <Plug>(coc-rename)
 
 " tab / shift + tab
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -126,14 +124,16 @@ let g:which_key_map.r = { 'name' : 'which_key_ignore' }
 let g:which_key_map.q = 'quickfix'
 let g:which_key_map.t = 'terminal'
 
+nnoremap <leader>sp :FzfPreviewProjectGrep<space>
 let g:which_key_map.s = {
 	\ 'name' : '+search',
-	\ 'p' : 'search project',
+	\ 'p' : 'project grep',
 	\ }
 
 let g:which_key_map.e = {
-	\ 'name' : 'reload vim',
-	\ 'p' : ':e!',
+	\ 'name' : 'reload',
+	\ 'r' : [':e!', 'reload nvim'],
+	\ 'u' : [':source ~/.config/nvim/init.vim', 'source nvim'],
 	\ }
 
 let g:which_key_map.p = {
