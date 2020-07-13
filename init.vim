@@ -35,14 +35,14 @@ map <C-l> :bn<cr>
 " Startify
 let g:startify_session_dir = '~/.config/nvim/sessions/'
 
-nnoremap <C-p> :FzfPreviewGitFiles<CR>
-nnoremap <C-k> :FzfPreviewBuffers<CR>
+map <C-n> :Lexplore <bar> :vertical resize 30 <CR>
 
-" why doesn't that work?
-" let g:fzf_preview_filelist_postprocess_command = 'xargs -d "\n" ls -U --color' " Use exa
+nnoremap <C-p> :GFiles<CR>
+nnoremap <C-k> :Buffers<CR>
 
-" Floatterm
-nnoremap <silent><leader>t :FloatermToggle<CR>
+" Escape terminal
+tnoremap <C-\><C-\> <C-\><C-n>
+
 "COC
 " Use `[g` and `]g` to navigate diagnostics
 map <silent> [g <Plug>(coc-diagnostic-prev)
@@ -92,12 +92,6 @@ let g:lightline = {
 " Use auocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
-" NERDTree
-let NERDTreeShowHidden = 1
-
-"Toggle on CTRL-n
-map <C-n> :NERDTreeToggle<CR>
-
 " Theme
 set t_Co=256
 if has("termguicolors")     " set true colors
@@ -107,24 +101,24 @@ endif
 color dogrun
 
 " allow transparency
-" hi Normal     ctermbg=NONE guibg=NONE
-" hi LineNr     ctermbg=NONE guibg=NONE
-" hi SignColumn ctermbg=NONE guibg=NONE
+hi Normal     ctermbg=NONE guibg=NONE
+"hi LineNr     ctermbg=NONE guibg=NONE
+"hi SignColumn ctermbg=NONE guibg=NONE
 
 " DT Session
 map <leader>dt :mks! ~/.config/nvim/sessions/dt.vim<CR>
-
-" Escape terminal
-tnoremap <leader><Esc> <C-\><C-n>
 
 " Vim Whichkey
 let g:which_key_map.d = { 'name' : 'which_key_ignore' }
 let g:which_key_map.h = { 'name' : 'which_key_ignore' }
 let g:which_key_map.r = { 'name' : 'which_key_ignore' }
 let g:which_key_map.q = 'quickfix'
+
+" Floatterm
+nnoremap <silent><leader>t :FloatermToggle<CR>
 let g:which_key_map.t = 'terminal'
 
-nnoremap <leader>sp :FzfPreviewProjectGrep<space>
+nnoremap <leader>sp :Ag<space>
 let g:which_key_map.s = {
 	\ 'name' : '+search',
 	\ 'p' : 'project grep',
@@ -136,63 +130,32 @@ let g:which_key_map.e = {
 	\ 'u' : [':source ~/.config/nvim/init.vim', 'source nvim'],
 	\ }
 
-let g:which_key_map.p = {
-	\ 'name' : '+project',
-	\ 'r' : ['FzfPreviewMruFiles', 'recently used'],
-	\ 'w' : ['FzfPreviewMrwFiles', 'recently written'],
-	\ 'd' : ['FzfPreviewDirectoryFiles', 'directory'],
-	\ 'g' : ['FzfPreviewGitFiles', 'git files'],
-	\ }
-
 let g:which_key_map.g = {
 	\ 'name' : '+git',
-	\ 's' : ['FzfPreviewGitStatus', 'status'],
-	\ 'd' : ['Git diff', 'diff'],
-	\ 'b' : ['Gblame', 'blame'],
-	\ 'o' : ['Gbrowse', 'open in browser'],
+	\ 's' : [':GFiles?', 'status'],
+	\ 'd' : [':Git diff', 'diff'],
+	\ 'b' : [':Gblame', 'blame'],
+	\ 'o' : [':Gbrowse', 'open in browser'],
 	\ }
 
 let g:which_key_map.f = {
 	\ 'name' : '+file',
-	\ 's' : ['w', 'save'],
-	\ 'x' : ['wq', 'save + close'],
-	\ 'q' : ['q', 'quit'],
+	\ 's' : [':w', 'save'],
+	\ 'x' : [':wqa!', 'save + close all'],
+	\ 'q' : [':q', 'quit'],
 	\ }
 
 let g:which_key_map.b = {
       \ 'name' : '+buffer' ,
-      \ 'd' : [':bd'        , 'delete buffer']   ,
+      \ 'c' : [':bd!'        , 'delete buffer']   ,
       \ 'f' : [':bfirst'    , 'first buffer']    ,
       \ 'h' : [':Startify'  , 'home buffer']     ,
       \ 'l' : [':blast'     , 'last buffer']     ,
       \ 'n' : [':bnext'     , 'next buffer']     ,
       \ 'p' : [':bprevious' , 'previous buffer'] ,
-      \ '?' : [':FzfPreviewBuffers', 'preview buffers']      ,
-      \ 'a' : [':FzfPreviewAllBuffers', 'preview all buffers']      ,
+      \ '?' : [':Buffers', 'preview buffers']      ,
+      \ 'a' : [':Buffers', 'preview all buffers']      ,
       \ }
-
-let g:which_key_map.m = {
-      \ 'name' : '+bookmark' ,
-      \ 't' : [':CocCommand bookmark.toggle'        , 'create/delete bookmark']   ,
-      \ 'a' : [':CocCommand bookmark.annotate'        , 'create annotated bookmark']   ,
-      \ 'n' : [':CocCommand bookmark.next'        , 'next bookmark']   ,
-      \ 'p' : [':CocCommand bookmark.prev'        , 'prev bookmark']   ,
-      \ 'c' : [':CocCommand bookmark.clearForCurrentFile'        , 'clear bookmarks in file']   ,
-      \ 'C' : [':CocCommand bookmark.clearForAllFiles'        , 'clear all bookmarks']   ,
-      \ 'l' : [':CocList bookmark'        , 'list bookmarks']   ,
-      \ }
-
-let g:which_key_map.c = {
-	\ 'name' : '+code',
-	\ 'r' : ['<Plug>(coc-rename)'     , 'rename']      ,
-	\ 'g' : {
-		\ 'name': '+goto',
-		\ 'd' : ['<Plug>(coc-definition)'     , 'definition']      ,
-		\ 't' : ['<Plug>(coc-type-definition)' , 'type-definition'] ,
-		\ 'i' : ['<Plug>(coc-implementation)' , 'implementation']  ,
-		\ 'r' : ['<Plug>(coc-references)' , 'references']  ,
-		\ },
-	\ }
 
 let g:which_key_map.w = {
       \ 'name' : '+window' ,
