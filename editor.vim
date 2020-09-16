@@ -18,6 +18,9 @@ set number
 " userelative line numbers
 " set rnu
 
+" hide whitespace
+set nolist
+
 " Indentation
 set autoindent
 set smartindent

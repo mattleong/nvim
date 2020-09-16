@@ -53,7 +53,7 @@ map <silent> gd <Plug>(coc-definition)
 map <silent> gt <Plug>(coc-type-definition)
 map <silent> gi <Plug>(coc-implementation)
 map <silent> gr <Plug>(coc-references)
-map <leader>rn <Plug>(coc-rename)
+map <silent> gn <Plug>(coc-rename)
 
 " tab / shift + tab
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -118,7 +118,7 @@ let g:which_key_map.q = 'quickfix'
 nnoremap <silent><leader>t :FloatermToggle<CR>
 let g:which_key_map.t = 'terminal'
 
-nnoremap <leader>sp :Ag<space>
+nnoremap <leader>sp :Rg<space>
 let g:which_key_map.s = {
 	\ 'name' : '+search',
 	\ 'p' : 'project grep',
