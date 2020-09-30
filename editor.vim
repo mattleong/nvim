@@ -15,11 +15,8 @@ set encoding=utf-8
 " Line numbers
 set number
 
-" userelative line numbers
-" set rnu
-
-" hide whitespace
-set nolist
+" Relative line numbers
+set rnu
 
 " Indentation
 set autoindent
@@ -30,12 +27,8 @@ set noexpandtab
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
-set tabstop=4
 set backspace=eol,start,indent
 set laststatus=2
-
-" relative line numbers
-set relativenumber
 
 " disabled for lightline
 set noshowmode

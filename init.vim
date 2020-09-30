@@ -26,14 +26,25 @@ augroup END
 
 " first non-blank space char
 map 0 ^
-" close buffer
-map <C-x> :bd<cr>
-" buffer control
-map <C-j> :bp<cr>
-map <C-l> :bn<cr>
 
 " Startify
 let g:startify_session_dir = '~/.config/nvim/sessions/'
+let g:startify_lists = [
+  \ { 'type': 'sessions',  'header': ['   Sessions']       },
+  \ { 'type': 'files',     'header': ['   MRU']            },
+  \ { 'type': 'dir',       'header': ['   Current Dir '. getcwd()] },
+  \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      },
+  \ { 'type': 'commands',  'header': ['   Commands']       },
+  \ ]
+
+let g:startify_bookmarks = [
+	\ {'n': '~/.config/nvim/init.vim'},
+	\ {'z': '~/.zsh/.zshrc'},
+	\ ]
+
+let g:startify_session_persistence = 1
+let g:startify_change_to_vcs_root = 1
+let g:startify_fortune_use_unicode = 1
 
 map <C-n> :Lexplore <bar> :vertical resize 30 <CR>
 
@@ -80,7 +91,7 @@ let g:lightline = {
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
   \             [ 'gitbranch', 'readonly', 'filename', 'gitdir'] ],
-  \   'right': [['lineinfo'], ['percent'], ['cocstatus', 'modified', 'fileencoding', 'filetype']]
+  \   'right': [['lineinfo'], ['percent'], ['fileencoding', 'filetype', 'cocstatus', 'modified' ]]
   \ },
   \ 'component_function': {
   \   'gitbranch': 'FugitiveHead',
@@ -101,12 +112,9 @@ endif
 color dogrun
 
 " allow transparency
-hi Normal     ctermbg=NONE guibg=NONE
-"hi LineNr     ctermbg=NONE guibg=NONE
-"hi SignColumn ctermbg=NONE guibg=NONE
-
-" DT Session
-map <leader>dt :mks! ~/.config/nvim/sessions/dt.vim<CR>
+" hi Normal     ctermbg=NONE guibg=NONE
+" hi LineNr     ctermbg=NONE guibg=NONE
+" hi SignColumn ctermbg=NONE guibg=NONE
 
 " Vim Whichkey
 let g:which_key_map.d = { 'name' : 'which_key_ignore' }
@@ -130,14 +138,6 @@ let g:which_key_map.e = {
 	\ 'u' : [':source ~/.config/nvim/init.vim', 'source nvim'],
 	\ }
 
-let g:which_key_map.g = {
-	\ 'name' : '+git',
-	\ 's' : [':GFiles?', 'status'],
-	\ 'd' : [':Git diff', 'diff'],
-	\ 'b' : [':Gblame', 'blame'],
-	\ 'o' : [':Gbrowse', 'open in browser'],
-	\ }
-
 let g:which_key_map.f = {
 	\ 'name' : '+file',
 	\ 's' : [':w', 'save'],
@@ -145,34 +145,11 @@ let g:which_key_map.f = {
 	\ 'q' : [':q', 'quit'],
 	\ }
 
-let g:which_key_map.b = {
-      \ 'name' : '+buffer' ,
-      \ 'c' : [':bd!'        , 'delete buffer']   ,
-      \ 'f' : [':bfirst'    , 'first buffer']    ,
-      \ 'h' : [':Startify'  , 'home buffer']     ,
-      \ 'l' : [':blast'     , 'last buffer']     ,
-      \ 'n' : [':bnext'     , 'next buffer']     ,
-      \ 'p' : [':bprevious' , 'previous buffer'] ,
-      \ '?' : [':Buffers', 'preview buffers']      ,
-      \ 'a' : [':Buffers', 'preview all buffers']      ,
-      \ }
-
 let g:which_key_map.w = {
       \ 'name' : '+window' ,
-      \ 'w' : ['<C-W>w'     , 'other window']          ,
-      \ 'd' : ['<C-W>c'     , 'delete window']         ,
-      \ 's' : ['<C-W>s'     , 'split below']    ,
-      \ 'v' : ['<C-W>v'     , 'split right']    ,
-      \ 'h' : ['<C-W>h'     , 'window left']           ,
-      \ 'j' : ['<C-W>j'     , 'window below']          ,
-      \ 'l' : ['<C-W>l'     , 'window right']          ,
-      \ 'k' : ['<C-W>k'     , 'window up']             ,
-      \ 'H' : ['<C-W>5<'    , 'expand window left']    ,
       \ 'J' : [':resize +5'  , 'expand window below']   ,
       \ 'L' : ['<C-W>5>'    , 'expand window right']   ,
       \ 'K' : [':resize -5'  , 'expand window up']      ,
-      \ '=' : ['<C-W>='     , 'balance window']        ,
-      \ '?' : [':Windows'    , 'fzf-window']            ,
       \ }
 nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
@@ -182,4 +159,3 @@ let g:which_key_use_floating_win = 1
 let g:which_key_floating_relative_win = 1
 let g:which_key_floating_opts = { 'width': '100', 'row': '1' }
 let g:which_key_sort_horizontal = 1
-
