@@ -46,8 +46,6 @@ let g:startify_session_persistence = 1
 let g:startify_change_to_vcs_root = 1
 let g:startify_fortune_use_unicode = 1
 
-map <C-n> :Lexplore <bar> :vertical resize 30 <CR>
-
 nnoremap <C-p> :GFiles<CR>
 nnoremap <C-k> :Buffers<CR>
 
@@ -55,6 +53,9 @@ nnoremap <C-k> :Buffers<CR>
 tnoremap <C-\><C-\> <C-\><C-n>
 
 "COC
+"coc-explorer
+nmap <C-n> :CocCommand explorer<CR>
+
 " Use `[g` and `]g` to navigate diagnostics
 map <silent> [g <Plug>(coc-diagnostic-prev)
 map <silent> ]g <Plug>(coc-diagnostic-next)
