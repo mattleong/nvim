@@ -10,7 +10,6 @@ let mapleader = "\<Space>"
 let g:maplocalleader = ','
 
 " NAVIGATION
-set cursorline
 "set cursorcolumn
 inoremap jj <ESC>
 
@@ -46,26 +45,37 @@ let g:startify_session_persistence = 1
 let g:startify_change_to_vcs_root = 1
 let g:startify_fortune_use_unicode = 1
 
-nnoremap <C-p> :GFiles<CR>
-nnoremap <C-k> :Buffers<CR>
-
+" Search Project
+nnoremap <C-s> :Rg<space>
+" Open git files
+nnoremap <C-k> :GFiles<CR>
+" Open buffers
+nnoremap <C-j> :Buffers<CR>
+" Terminal
+nnoremap <C-l> :FloatermToggle<CR>
 " Escape terminal
-tnoremap <C-\><C-\> <C-\><C-n>
+tnoremap <C-j> <C-\><C-n>
+
+" Window Management
+nnoremap <leader>l :vertical res -5<CR>
+nnoremap <leader>h :vertical res +5<CR>
+nnoremap <leader>j :res -5<CR>
+nnoremap <leader>k :res +5<CR>
 
 "COC
 "coc-explorer
-nmap <C-n> :CocCommand explorer<CR>
+nnoremap <C-n> :CocCommand explorer<CR>
 
 " Use `[g` and `]g` to navigate diagnostics
-map <silent> [g <Plug>(coc-diagnostic-prev)
-map <silent> ]g <Plug>(coc-diagnostic-next)
+nnoremap <silent> [g <Plug>(coc-diagnostic-prev)
+nnoremap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " GoTo code navigation.
-map <silent> gd <Plug>(coc-definition)
-map <silent> gt <Plug>(coc-type-definition)
-map <silent> gi <Plug>(coc-implementation)
-map <silent> gr <Plug>(coc-references)
-map <silent> gn <Plug>(coc-rename)
+nnoremap <silent> gd <Plug>(coc-definition)
+nnoremap <silent> gt <Plug>(coc-type-definition)
+nnoremap <silent> gi <Plug>(coc-implementation)
+nnoremap <silent> gr <Plug>(coc-references)
+nnoremap <silent> gn <Plug>(coc-rename)
 
 " tab / shift + tab
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -92,7 +102,7 @@ let g:lightline = {
   \ 'active': {
   \   'left': [ [ 'mode', 'paste' ],
   \             [ 'gitbranch', 'readonly', 'filename', 'gitdir'] ],
-  \   'right': [['lineinfo'], ['percent'], ['fileencoding', 'filetype', 'cocstatus', 'modified' ]]
+  \   'right': [['lineinfo'], ['percent'], [ 'modified', 'cocstatus', 'fileencoding', 'filetype', ]]
   \ },
   \ 'component_function': {
   \   'gitbranch': 'FugitiveHead',
@@ -112,51 +122,3 @@ endif
 
 color dogrun
 
-" allow transparency
-" hi Normal     ctermbg=NONE guibg=NONE
-" hi LineNr     ctermbg=NONE guibg=NONE
-" hi SignColumn ctermbg=NONE guibg=NONE
-
-" Vim Whichkey
-let g:which_key_map.d = { 'name' : 'which_key_ignore' }
-let g:which_key_map.h = { 'name' : 'which_key_ignore' }
-let g:which_key_map.r = { 'name' : 'which_key_ignore' }
-let g:which_key_map.q = 'quickfix'
-
-" Floatterm
-nnoremap <silent><leader>t :FloatermToggle<CR>
-let g:which_key_map.t = 'terminal'
-
-nnoremap <leader>sp :Rg<space>
-let g:which_key_map.s = {
-	\ 'name' : '+search',
-	\ 'p' : 'project grep',
-	\ }
-
-let g:which_key_map.e = {
-	\ 'name' : 'reload',
-	\ 'r' : [':e!', 'reload nvim'],
-	\ 'u' : [':source ~/.config/nvim/init.vim', 'source nvim'],
-	\ }
-
-let g:which_key_map.f = {
-	\ 'name' : '+file',
-	\ 's' : [':w', 'save'],
-	\ 'x' : [':wqa!', 'save + close all'],
-	\ 'q' : [':q', 'quit'],
-	\ }
-
-let g:which_key_map.w = {
-      \ 'name' : '+window' ,
-      \ 'J' : [':resize +5'  , 'expand window below']   ,
-      \ 'L' : ['<C-W>5>'    , 'expand window right']   ,
-      \ 'K' : [':resize -5'  , 'expand window up']      ,
-      \ }
-nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
-vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
-
-let g:which_key_hspace = 1
-let g:which_key_use_floating_win = 1
-let g:which_key_floating_relative_win = 1
-let g:which_key_floating_opts = { 'width': '100', 'row': '1' }
-let g:which_key_sort_horizontal = 1

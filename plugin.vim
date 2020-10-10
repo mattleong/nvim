@@ -13,8 +13,6 @@ Plug 'mhinz/vim-startify'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
-
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 

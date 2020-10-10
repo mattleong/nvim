@@ -30,6 +30,9 @@ set shiftwidth=4
 set backspace=eol,start,indent
 set laststatus=2
 
+" show cursorline
+set cursorline
+
 " disabled for lightline
 set noshowmode
 
@@ -43,7 +46,7 @@ set wildignore+=*/node_modules/*,*.scssc,*/wp-includes/*,*/wp-admin/*,*/vendor/*
 set nowrap
 
 " highlight all search matches after search is complete
-set hlsearch
+set nohlsearch
 
 " Command-line completion in an enhanced mode
 set wildmenu
@@ -76,4 +79,10 @@ set timeoutlen=500
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
 set updatetime=300
+
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
+" Always show the signcolumn, otherwise it would shift the text each time
+set signcolumn=number
 
