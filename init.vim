@@ -37,12 +37,46 @@ let g:startify_lists = [
   \ ]
 
 let g:startify_bookmarks = [
+	\ {'d': '~/dev/developer/src/wordpress/package.json'},
 	\ {'n': '~/.config/nvim/init.vim'},
 	\ {'z': '~/.zsh/.zshrc'},
 	\ ]
 
-let g:startify_session_persistence = 1
+function! s:getchar()
+  let c = getchar()
+  if c =~ '^\d\+$'
+    let c = nr2char(c)
+  endif
+  return c
+endfunction
+
+" Custom quit session prompt
+function! QuitSession()
+  echo 'Are you sure you want to quit session? y/n'
+  let c = s:getchar()
+  if c == 'y'
+    SClose
+  endif
+endfunction
+
+nnoremap <C-q> :call QuitSession()<cr>
+
+let g:startify_session_before_save = [
+    \ 'echo "Cleaning up before saving.."',
+    \ 'silent! call MaybeCloseCocExplorer()',
+    \ ]
+
+let g:ascii = [
+      \ '        __',
+      \ '.--.--.|__|.--------.',
+      \ '|  |  ||  ||        |',
+      \ ' \___/ |__||__|__|__|',
+      \ ''
+      \]
+let g:startify_custom_header = g:ascii + startify#fortune#boxed()
 let g:startify_change_to_vcs_root = 1
+let g:startify_session_autoload = 1
+let g:startify_session_persistence = 1
 let g:startify_fortune_use_unicode = 1
 
 " Search Project
@@ -54,7 +88,7 @@ nnoremap <C-j> :Buffers<CR>
 " Terminal
 nnoremap <C-l> :FloatermToggle<CR>
 " Escape terminal
-tnoremap <C-j> <C-\><C-n>
+tnoremap <C-l> <C-\><C-n>
 
 " Window Management
 nnoremap <leader>l :vertical res -5<CR>
@@ -63,6 +97,14 @@ nnoremap <leader>j :res -5<CR>
 nnoremap <leader>k :res +5<CR>
 
 "COC
+" close coc explorer if open
+function! MaybeCloseCocExplorer()
+  let opened = CocAction('runCommand', 'explorer.getNodeInfo', 'closest') is v:null
+  if opened == 0
+	  CocCommand explorer
+  endif
+endfunction
+
 "coc-explorer
 nnoremap <C-n> :CocCommand explorer<CR>
 
@@ -97,18 +139,36 @@ function! GitStatus()
   return printf('+%d ~%d -%d', a, m, r)
 endfunction
 
+function! LightlineReadonly()
+  return &readonly ? '' : ''
+endfunction
+
+function! LightlineFugitive()
+  if exists('*FugitiveHead')
+    let branch = FugitiveHead()
+    return branch !=# '' ? ' '.branch : ''
+  endif
+  return ''
+endfunction
+
 let g:lightline = {
   \ 'colorscheme': 'dogrun',
+  \ 'component': {
+  \   'lineinfo': '%3l:%-2c',
+  \ },
   \ 'active': {
-  \   'left': [ [ 'mode', 'paste' ],
-  \             [ 'gitbranch', 'readonly', 'filename', 'gitdir'] ],
-  \   'right': [['lineinfo'], ['percent'], [ 'modified', 'cocstatus', 'fileencoding', 'filetype', ]]
+  \   'left': [ [ 'mode', ],
+  \             [ 'gitbranch', 'filename', 'cocstatus', ]],
+  \   'right': [[ 'percent', 'lineinfo', ], [ 'gitstatus', 'modified', 'filetype', ], [ 'fileencoding', 'readonly', ]],
   \ },
   \ 'component_function': {
-  \   'gitbranch': 'FugitiveHead',
+  \   'gitbranch': 'LightlineFugitive',
   \   'cocstatus': 'coc#status',
-  \   'gitdir': 'GitStatus'
+  \   'gitstatus': 'GitStatus',
+  \   'readonly': 'LightlineReadonly',
   \ },
+  \ 'separator': { 'left': '', 'right': '' },
+  \ 'subseparator': { 'left': '', 'right': '' },
   \ }
 
 " Use auocmd to force lightline update.
