@@ -12,6 +12,9 @@ set viminfo^=%
 " Encodings
 set encoding=utf-8
 
+" Line numbers
+set number
+
 " Relative line numbers
 set rnu
 
