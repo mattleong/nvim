@@ -154,14 +154,18 @@ function! LightlineFugitive()
 endfunction
 
 let g:lightline = {
-  \ 'colorscheme': 'dogrun',
+  \ 'colorscheme': 'iceberg',
   \ 'component': {
   \   'lineinfo': '%3l:%-2c',
   \ },
   \ 'active': {
-  \   'left': [ [ 'mode', ],
-  \             [ 'gitbranch', 'filename', 'cocstatus', ]],
-  \   'right': [[ 'percent', 'lineinfo', ], [ 'gitstatus', 'modified', 'filetype', ], [ 'fileencoding', 'readonly', ]],
+  \   'left': [[ 'mode', ],
+  \             [ 'gitbranch', 'filename', 'gitstatus', 'modified' ]],
+  \   'right': [[ 'percent', 'lineinfo', 'filetype' ], ['cocstatus'], [ 'readonly' ]],
+  \ },
+  \ 'inactive': {
+  \   'left': [[ 'gitbranch', 'filename', 'cocstatus' ]],
+  \   'right': [[ 'modified', 'gitstatus',  'percent', 'lineinfo', 'filetype' ]],
   \ },
   \ 'component_function': {
   \   'gitbranch': 'LightlineFugitive',
@@ -182,5 +186,5 @@ if has("termguicolors")     " set true colors
 	set termguicolors
 endif
 
-color dogrun
+color iceberg
 
