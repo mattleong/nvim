@@ -9,19 +9,6 @@ let g:maplocalleader = ','
 "set cursorcolumn
 inoremap jj <ESC>
 
-" When editing a file, always jump to the last known cursor position.
-" Don't do it when the position is invalid or when inside an event handler
-" (happens when dropping a file on gvim).
-autocmd BufReadPost *
-\ if line("'\"") >= 1 && line("'\"") <= line("$") |
-\   exe "normal! g`\"" |
-\ endif
-
-augroup END
-
-" first non-blank space char
-map 0 ^
-
 " Startify
 let g:startify_session_dir = '~/.config/nvim/sessions/'
 let g:startify_lists = [
@@ -33,7 +20,6 @@ let g:startify_lists = [
   \ ]
 
 let g:startify_bookmarks = [
-	\ {'d': '~/dev/developer/src/wordpress/package.json'},
 	\ {'n': '~/.config/nvim/init.vim'},
 	\ {'z': '~/.zsh/.zshrc'},
 	\ ]
@@ -59,6 +45,7 @@ nnoremap <C-q> :call QuitSession()<cr>
 
 let g:startify_session_before_save = [
     \ 'echo "Cleaning up before saving.."',
+	\ 'silent! :Vista!',
     \ 'silent! call MaybeCloseCocExplorer()',
     \ ]
 
@@ -71,7 +58,6 @@ let g:ascii = [
       \]
 let g:startify_custom_header = g:ascii + startify#fortune#boxed()
 let g:startify_change_to_vcs_root = 1
-let g:startify_session_autoload = 1
 let g:startify_session_persistence = 1
 let g:startify_fortune_use_unicode = 1
 
@@ -81,10 +67,25 @@ nnoremap <C-s> :Rg<space>
 nnoremap <C-k> :GFiles<CR>
 " Open buffers
 nnoremap <C-j> :Buffers<CR>
+" Buffer symbols
+nnoremap <C-h> :Vista finder fzf:coc<CR>
 " Terminal
 nnoremap <C-l> :FloatermToggle<CR>
 " Escape terminal
 tnoremap <C-l> <C-\><C-n>
+
+"Vista
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+" Ensure you have installed some decent font to show these pretty symbols, then you can enable icon for the kind.
+let g:vista_default_executive = 'coc'
+let g:vista_fzf_preview = ['right:50%']
+let g:vista#renderer#enable_icon = 1
+
+" The default icons can't be suitable for all the filetypes, you can extend it as you wish.
+let g:vista#renderer#icons = {
+\   "function": "\uf794",
+\   "variable": "\uf71b",
+\  }
 
 " Window Management
 nnoremap <leader>l :vertical res -5<CR>
@@ -97,7 +98,7 @@ nnoremap <leader>k :res +5<CR>
 function! MaybeCloseCocExplorer()
   let opened = CocAction('runCommand', 'explorer.getNodeInfo', 'closest') is v:null
   if opened == 0
-	  CocCommand explorer
+	  :CocCommand explorer
   endif
 endfunction
 
@@ -168,6 +169,16 @@ function! ErrorStatusDiagnostic() abort
   return join(msgs, ' ') . get(g:, 'coc_status', '')
 endfunction
 
+function! NearestMethodOrFunction() abort
+  return get(b:, 'vista_nearest_method_or_function', '')
+endfunction
+
+" By default vista.vim never run if you don't call it explicitly.
+"
+" If you want to show the nearest function in your statusline automatically,
+" you can add the following line to your vimrc
+autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+
 let g:lightline = {
   \ 'colorscheme': 'iceberg',
   \ 'component': {
@@ -175,7 +186,7 @@ let g:lightline = {
   \ },
   \ 'active': {
   \   'left': [[ 'mode', ],
-  \             [ 'gitbranch', 'filename', 'gitstatus', 'modified' ]],
+  \             [ 'gitbranch', 'filename', 'nearestFn', 'gitstatus', 'modified' ]],
   \   'right': [[ 'lineinfo', 'filetype' ], ['coc_status'], [ 'readonly' ]],
   \ },
   \ 'inactive': {
@@ -187,6 +198,7 @@ let g:lightline = {
   \   'cocstatus': 'coc#status',
   \   'gitstatus': 'GitStatus',
   \   'readonly': 'LightlineReadonly',
+  \   'nearestFn': 'NearestMethodOrFunction',
   \ },
   \ 'component_expand': {
   \   'coc_status': 'ErrorStatusDiagnostic',

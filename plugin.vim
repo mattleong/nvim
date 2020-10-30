@@ -7,6 +7,8 @@ Plug 'https://github.com/cocopon/iceberg.vim.git'
 
 Plug 'itchyny/lightline.vim'
 
+Plug 'liuchengxu/vista.vim'
+
 Plug 'voldikss/vim-floaterm'
 
 Plug 'mhinz/vim-startify'

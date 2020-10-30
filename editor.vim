@@ -7,7 +7,7 @@ autocmd BufWritePre * :%s/\s\+$//e
 set autoread
 
 " remember info about open buffers on close
-set viminfo^=%
+" set viminfo^=%
 
 " Encodings
 set encoding=utf-8
