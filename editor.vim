@@ -40,7 +40,7 @@ set noshowmode
 set list listchars=tab:❘-,trail:·,extends:»,precedes:«,nbsp:×
 
 " Ignore files
-set wildignore+=*/node_modules/*,*.scssc,*/wp-includes/*,*/wp-admin/*,*/vendor/*
+set wildignore+=*/node_modules/*,*/wp-includes/*,*/wp-admin/*,*/vendor/*
 
 " Don't wrap text
 set nowrap
