@@ -13,25 +13,6 @@ let g:startify_bookmarks = [
 	\ {'z': '~/.zsh/.zshrc'},
 	\ ]
 
-function! s:getchar()
-  let c = getchar()
-  if c =~ '^\d\+$'
-    let c = nr2char(c)
-  endif
-  return c
-endfunction
-
-" Custom quit session prompt
-function! QuitSession()
-  echo 'Are you sure you want to quit session? y/n'
-  let c = s:getchar()
-  if c == 'y'
-    SClose
-  endif
-endfunction
-
-nnoremap <C-q> :call QuitSession()<cr>
-
 let g:startify_session_before_save = [
     \ 'echo "Cleaning up before saving.."',
 	\ 'silent! :Vista!',

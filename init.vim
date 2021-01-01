@@ -3,7 +3,7 @@ source ~/.config/nvim/editor.vim
 source ~/.config/nvim/plugins/coc.vim
 source ~/.config/nvim/plugins/lightline.vim
 source ~/.config/nvim/plugins/startify.vim
-source ~/.config/nvim/plugins/vista.vim
+source ~/.config/nvim/plugins/floatterm.vim
 
 " Remap leader
 let mapleader = "\<Space>"
@@ -19,10 +19,8 @@ nnoremap <C-s> :Rg<space>
 nnoremap <C-k> :GFiles<CR>
 " Open buffers
 nnoremap <C-j> :Buffers<CR>
-" Buffer symbols
-nnoremap <C-h> :Vista finder fzf:coc<CR>
 " Terminal
-nnoremap <C-l> :FloatermToggle<CR>
+nnoremap <C-l> :FloatermToggle main<CR>
 " Escape terminal
 tnoremap <C-l> <C-\><C-n>
 
@@ -34,8 +32,6 @@ nnoremap <leader>k :res +5<CR>
 
 " Theme
 set t_Co=256
-if has("termguicolors")     " set true colors
-	set termguicolors
-endif
+set termguicolors
 
 color dogrun

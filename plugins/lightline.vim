@@ -34,10 +34,6 @@ function! ErrorStatusDiagnostic() abort
   return join(msgs, ' ') . get(g:, 'coc_status', '')
 endfunction
 
-function! NearestMethodOrFunction() abort
-  return get(b:, 'vista_nearest_method_or_function', '')
-endfunction
-
 let g:lightline = {
   \ 'colorscheme': 'dogrun',
   \ 'component': {
@@ -45,7 +41,7 @@ let g:lightline = {
   \ },
   \ 'active': {
   \   'left': [[ 'mode', ],
-  \             [ 'gitbranch', 'filename', 'nearestFn', 'gitstatus', 'modified' ]],
+  \             [ 'gitbranch', 'filename', 'gitstatus', 'modified' ]],
   \   'right': [[ 'lineinfo', 'filetype' ], ['coc_status'], [ 'readonly' ]],
   \ },
   \ 'inactive': {
@@ -57,7 +53,6 @@ let g:lightline = {
   \   'cocstatus': 'coc#status',
   \   'gitstatus': 'GitStatus',
   \   'readonly': 'LightlineReadonly',
-  \   'nearestFn': 'NearestMethodOrFunction',
   \ },
   \ 'component_expand': {
   \   'coc_status': 'ErrorStatusDiagnostic',
