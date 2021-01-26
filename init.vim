@@ -30,8 +30,3 @@ nnoremap <leader>h :vertical res +5<CR>
 nnoremap <leader>j :res -5<CR>
 nnoremap <leader>k :res +5<CR>
 
-" Theme
-set t_Co=256
-set termguicolors
-
-color dogrun

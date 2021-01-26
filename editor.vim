@@ -45,8 +45,12 @@ set wildignore+=*/node_modules/*,*/wp-includes/*,*/wp-admin/*,*/vendor/*
 " Don't wrap text
 set nowrap
 
+set scrolloff=18
+
 " highlight all search matches after search is complete
 set nohlsearch
+
+set completeopt=menuone,noinsert,noselect
 
 " Command-line completion in an enhanced mode
 set wildmenu
@@ -78,11 +82,20 @@ set timeoutlen=500
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=500
+set updatetime=750
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
+set cmdheight=2
+
 " Always show the signcolumn, otherwise it would shift the text each time
 set signcolumn=yes
 
+" Theme
+set t_Co=256
+set termguicolors
+
+color dogrun
+
+highlight Normal guibg=none
