@@ -1,5 +1,6 @@
 local packer = require("packer")
 local use = packer.use
+local cmd = vim.cmd
 
 packer.startup(
 	function()
@@ -36,7 +37,13 @@ packer.startup(
 
 		-- autocomplete/ide
 		use {"neoclide/coc.nvim", branch = "release"}
+
+        use {"lukas-reineke/indent-blankline.nvim", branch = "lua"}
 	end
 )
 
 require("nv-plugins.nv-treesitter")
+require("nv-plugins.nv-floatterm")
+
+cmd 'source ~/.config/nvim/lua/nv-plugins/coc.vim'
+cmd 'source ~/.config/nvim/lua/nv-plugins/lightline.vim'
