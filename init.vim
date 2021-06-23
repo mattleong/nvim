@@ -9,24 +9,22 @@ source ~/.config/nvim/plugins/floatterm.vim
 let mapleader = "\<Space>"
 let g:maplocalleader = ','
 
-" NAVIGATION
-"set cursorcolumn
-inoremap jj <ESC>
-
 " Search Project
 nnoremap <C-s> :Rg<space>
 " Open git files
-nnoremap <C-k> :GFiles<CR>
+nnoremap <C-k> :Buffers<CR>
 " Open buffers
-nnoremap <C-j> :Buffers<CR>
+nnoremap <C-j> :GFiles<CR>
 " Terminal
-nnoremap <C-l> :FloatermToggle main<CR>
+nnoremap <C-l> :FloatermToggle<CR>
 " Escape terminal
 tnoremap <C-l> <C-\><C-n>
+tnoremap <C-w>l <C-\><C-n> :FloatermNext <CR>
+tnoremap <C-w>h <C-\><C-n> :FloatermPrev <CR>
+tnoremap <C-n> <C-\><C-n> :FloatermNew <CR>
 
 " Window Management
-nnoremap <leader>l :vertical res -5<CR>
-nnoremap <leader>h :vertical res +5<CR>
-nnoremap <leader>j :res -5<CR>
-nnoremap <leader>k :res +5<CR>
+nnoremap <leader>t :tabnew <CR>
+nnoremap <leader>h :tabp <CR>
+nnoremap <leader>l :tabn <CR>
 

@@ -5,11 +5,15 @@ autocmd BufWritePre * :%s/\s\+$//e
 
 set hidden
 
+set nocompatible
+
 " Update files written to outside of vim
 set autoread
 
 " remember info about open buffers on close
 set viminfo^=%
+
+set redrawtime=4000
 
 " Encodings
 set encoding=utf-8
@@ -82,12 +86,10 @@ set timeoutlen=500
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=50
+set updatetime=100
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
-
-set cmdheight=2
 
 " Always show the signcolumn, otherwise it would shift the text each time
 set signcolumn=yes
