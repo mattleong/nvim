@@ -1,11 +1,3 @@
--- Auto install packer.nvim if not exists
-local fn = vim.fn
-local execute = vim.api.nvim_command
-local cmd = vim.cmd
-
--- cmd [[packadd packer.nvim]]
--- cmd 'autocmd BufWritePost ~/.config/nvim/lua/nv-plugins.lua PackerCompile' -- Auto compile when there are changes in plugins.lua
-
 local packer = require("packer")
 local use = packer.use
 
@@ -29,12 +21,12 @@ packer.startup(
 		-- floating terminal
 		use "voldikss/vim-floaterm"
 
---		use "mhinz/vim-startify"
-
 		-- file management
-		use{
+		use {
 			"junegunn/fzf",
-			run = function() vim.fn['fzf#install'](0) end
+			run = function()
+				vim.fn['fzf#install'](0)
+			end
 		}
 		use "junegunn/fzf.vim"
 
@@ -46,3 +38,5 @@ packer.startup(
 		use {"neoclide/coc.nvim", branch = "release"}
 	end
 )
+
+require("nv-plugins.nv-treesitter")
