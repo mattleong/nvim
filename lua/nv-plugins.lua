@@ -1,3 +1,15 @@
+-- Auto install packer.nvim if not exists
+local fn = vim.fn
+local execute = vim.api.nvim_command
+local cmd = vim.cmd
+local install_path = fn.stdpath('data')..'/site/pack/packer/opt/packer.nvim'
+if fn.empty(fn.glob(install_path)) > 0 then
+	execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
+end
+
+cmd [[packadd packer.nvim]]
+-- cmd 'autocmd BufWritePost ~/.config/nvim/lua/nv-plugins.lua PackerCompile' -- Auto compile when there are changes in plugins.lua
+
 local packer = require("packer")
 local use = packer.use
 
@@ -34,17 +46,5 @@ packer.startup(
 
 		-- autocomplete/ide
 		use {"neoclide/coc.nvim", branch = "release"}
-
-		--        use "akinsho/nvim-bufferline.lua"
-
-		--        use "kyazdani42/nvim-web-devicons"
-		--        use "nvim-telescope/telescope.nvim"
-		--        use "nvim-telescope/telescope-media-files.nvim"
-		--        use "nvim-lua/popup.nvim"
-
-		-- misc
-		--        use "tweekmonster/startuptime.vim"
-		--        use "folke/which-key.nvim"
---		use {"lukas-reineke/indent-blankline.nvim", branch = "lua"}
 	end
 )
