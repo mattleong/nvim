@@ -4,6 +4,7 @@ source ~/.config/nvim/plugins/coc.vim
 source ~/.config/nvim/plugins/lightline.vim
 source ~/.config/nvim/plugins/startify.vim
 source ~/.config/nvim/plugins/floatterm.vim
+source ~/.config/nvim/plugins/treesitter.vim
 
 " Remap leader
 let mapleader = "\<Space>"

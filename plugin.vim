@@ -1,6 +1,6 @@
 call plug#begin('~/.vim/plugged')
 
-Plug 'sheerun/vim-polyglot'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 Plug 'wadackel/vim-dogrun'
 
