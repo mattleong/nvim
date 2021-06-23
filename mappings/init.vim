@@ -1,6 +1,6 @@
 source ~/.config/nvim/mappings/coc.vim
 source ~/.config/nvim/mappings/lightline.vim
-source ~/.config/nvim/mappings/startify.vim
+" source ~/.config/nvim/mappings/startify.vim
 source ~/.config/nvim/mappings/floatterm.vim
 
 " Remap leader
