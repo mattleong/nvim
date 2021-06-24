@@ -10,7 +10,17 @@ packer.startup(
 		use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
 
 		-- theme stuff
-		use "itchyny/lightline.vim"
+--		use "itchyny/lightline.vim"
+		use {
+		  'glepnir/galaxyline.nvim',
+			branch = 'main',
+			-- your statusline
+			config = function()
+				require 'lua.nv-statusline'
+			end,
+			-- some optional icons
+			requires = {'kyazdani42/nvim-web-devicons', opt = true}
+		}
 		use {
 			"wadackel/vim-dogrun",
 			config = function()
@@ -49,4 +59,4 @@ require("nv-plugins.nv-treesitter")
 require("nv-plugins.nv-floatterm")
 
 cmd 'source ~/.config/nvim/lua/nv-plugins/coc.vim'
-cmd 'source ~/.config/nvim/lua/nv-plugins/lightline.vim'
+-- cmd 'source ~/.config/nvim/lua/nv-plugins/lightline.vim'
