@@ -20,13 +20,17 @@ packer.startup(
 		}
 
 		-- floating terminal
-		use "voldikss/vim-floaterm"
+		use {
+			"voldikss/vim-floaterm",
+			opt = true,
+			cmd = {'FloatermToggle', 'FloatermNew', 'FloatermSend'}
+		}
 
 		-- file management
 		use {
 			"junegunn/fzf",
 			run = function()
-				vim.fn['fzf#install'](0)
+				vim.fn['fzf#install']()
 			end
 		}
 		use "junegunn/fzf.vim"

@@ -102,8 +102,10 @@ _G.packer_plugins = {
     path = "/home/mrchu001/.local/share/nvim/site/pack/packer/start/vim-dogrun"
   },
   ["vim-floaterm"] = {
-    loaded = true,
-    path = "/home/mrchu001/.local/share/nvim/site/pack/packer/start/vim-floaterm"
+    commands = { "FloatermToggle", "FloatermNew", "FloatermSend" },
+    loaded = false,
+    needs_bufread = false,
+    path = "/home/mrchu001/.local/share/nvim/site/pack/packer/opt/vim-floaterm"
   },
   ["vim-fugitive"] = {
     loaded = true,
@@ -120,6 +122,14 @@ time([[Defining packer_plugins]], false)
 time([[Config for vim-dogrun]], true)
 try_loadstring("\27LJ\2\n\\\0\0\3\0\4\0\t6\0\0\0009\0\1\0'\2\2\0B\0\2\0016\0\0\0009\0\1\0'\2\3\0B\0\2\1K\0\1\0 highlight Normal guibg=none\17color dogrun\bcmd\bvim\0", "config", "vim-dogrun")
 time([[Config for vim-dogrun]], false)
+
+-- Command lazy-loads
+time([[Defining lazy-load commands]], true)
+vim.cmd [[command! -nargs=* -range -bang -complete=file FloatermToggle lua require("packer.load")({'vim-floaterm'}, { cmd = "FloatermToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+vim.cmd [[command! -nargs=* -range -bang -complete=file FloatermNew lua require("packer.load")({'vim-floaterm'}, { cmd = "FloatermNew", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+vim.cmd [[command! -nargs=* -range -bang -complete=file FloatermSend lua require("packer.load")({'vim-floaterm'}, { cmd = "FloatermSend", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args> }, _G.packer_plugins)]]
+time([[Defining lazy-load commands]], false)
+
 if should_profile then save_profiles() end
 
 END

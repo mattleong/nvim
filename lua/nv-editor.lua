@@ -6,7 +6,6 @@ cmd [[
 	syntax enable
 	filetype plugin indent on
 	autocmd BufWritePre * :%s/\s\+$//e
-	set viminfo^=%
 ]]
 
 -- misc
@@ -14,7 +13,7 @@ opt.hidden = true
 opt.encoding = 'utf-8'
 opt.backspace = 'eol,start,indent'
 opt.clipboard = 'unnamedplus'
-opt.matchpairs = '(:),{:},[:],<:>'
+opt.matchpairs = {'(:)','{:}','[:]','<:>'}
 
 -- indention
 opt.autoindent = true
@@ -29,7 +28,7 @@ opt.shiftwidth = indent
 opt.wildmenu = true
 opt.ignorecase = true
 opt.smartcase = true
-cmd [[ set wildignore+=*/node_modules/*,*/wp-includes/*,*/wp-admin/*,*/vendor/* ]]
+opt.wildignore = opt.wildignore + {'*/node_modules/*','*/wp-includes/*','*/wp-admin/*','*/vendor/*'}
 
 -- ui
 opt.number = true
@@ -58,8 +57,8 @@ opt.backup = false
 opt.writebackup = false
 
 -- autocomplete
-opt.completeopt = 'menuone,preview,noinsert,noselect'
-opt.shortmess = 'filnxtToOFc'
+opt.completeopt = {'menuone','preview','noinsert','noselect'}
+opt.shortmess = opt.shortmess + 'c'
 
 -- perfomance
 opt.updatetime = 100
