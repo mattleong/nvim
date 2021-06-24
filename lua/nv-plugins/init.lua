@@ -38,7 +38,6 @@ packer.startup(
 		-- autocomplete/ide
 		use {"neoclide/coc.nvim", branch = "release"}
 
-        use {"lukas-reineke/indent-blankline.nvim", branch = "lua"}
 	end
 )
 

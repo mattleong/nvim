@@ -84,10 +84,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/mrchu001/.local/share/nvim/site/pack/packer/start/fzf.vim"
   },
-  ["indent-blankline.nvim"] = {
-    loaded = true,
-    path = "/home/mrchu001/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim"
-  },
   ["lightline.vim"] = {
     loaded = true,
     path = "/home/mrchu001/.local/share/nvim/site/pack/packer/start/lightline.vim"

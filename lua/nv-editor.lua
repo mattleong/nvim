@@ -1,7 +1,6 @@
--- local utils = require('nv-utils')
 local cmd = vim.cmd
-local indent = 4
 local opt = vim.opt
+local indent = 4
 
 cmd [[
 	syntax enable

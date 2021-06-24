@@ -1,4 +1,4 @@
-local utils = require('nv-utils')
+local map = require('nv-utils').map
 
-utils.map('n', '<C-l>', ':FloatermToggle<CR>', { noremap = true })
-utils.map('t', '<C-l>', [[<C-\><C-n>]], { noremap = true })
+map('n', '<C-l>', ':FloatermToggle<CR>', { noremap = true })
+map('t', '<C-l>', [[<C-\><C-n>]], { noremap = true })
