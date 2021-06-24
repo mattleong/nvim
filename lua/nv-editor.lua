@@ -1,6 +1,7 @@
-local utils = require('nv-utils')
+-- local utils = require('nv-utils')
 local cmd = vim.cmd
 local indent = 4
+local opt = vim.opt
 
 cmd [[
 	syntax enable
@@ -10,57 +11,62 @@ cmd [[
 ]]
 
 -- misc
-utils.opt('o', 'hidden', true)
-utils.opt('o', 'encoding', 'utf-8')
-utils.opt('o', 'backspace', 'eol,start,indent')
-utils.opt('o', 'clipboard', 'unnamedplus')
-utils.opt('o', 'matchpairs', '(:),{:},[:],<:>') -- Add HTML brackets to pair matching
+opt.hidden = true
+opt.encoding = 'utf-8'
+opt.backspace = 'eol,start,indent'
+opt.clipboard = 'unnamedplus'
+opt.matchpairs = '(:),{:},[:],<:>'
 
 -- indention
-utils.opt('b', 'autoindent', true)
-utils.opt('b', 'smartindent', true)
+opt.autoindent = true
+opt.smartindent = true
 
 -- tabs
-utils.opt('b', 'tabstop', indent)
-utils.opt('b', 'softtabstop', indent)
-utils.opt('b', 'shiftwidth', indent)
+opt.tabstop = indent
+opt.softtabstop = indent
+opt.shiftwidth = indent
 
--- search
-utils.opt('o', 'wildmenu', true)
-utils.opt('o', 'ignorecase', true)
-utils.opt('o', 'smartcase', true)
+-- -- search
+opt.wildmenu = true
+opt.ignorecase = true
+opt.smartcase = true
 cmd [[ set wildignore+=*/node_modules/*,*/wp-includes/*,*/wp-admin/*,*/vendor/* ]]
 
 -- ui
-utils.opt('w', 'number', true)
-utils.opt('w', 'rnu', true)
-utils.opt('o', 'cursorline', true)
-utils.opt('o', 'signcolumn', 'yes')
-utils.opt('o', 'laststatus', 2)
-utils.opt('o', 'scrolloff', 18)
-utils.opt('o', 'wrap', false)
-utils.opt('o', 'hlsearch', false)
-utils.opt('o', 'list', true)
-utils.opt('o', 'listchars', 'tab:❘-,trail:·,extends:»,precedes:«,nbsp:×')
-utils.opt('o', 'showmode', false)
-utils.opt('o', 'lazyredraw', true) -- Don't redraw screen while running macros
-utils.opt('o', 'mouse', 'a')
+opt.number = true
+opt.rnu = true
+opt.cursorline = true
+opt.signcolumn = 'yes'
+opt.laststatus = 2
+opt.scrolloff = 18
+opt.wrap = false
+opt.hlsearch = false
+opt.list = true
+opt.listchars = {
+	tab = '❘-',
+	trail = '·',
+	extends = '»',
+	precedes = '«',
+	nbsp = '×'
+}
+opt.showmode = false
+opt.lazyredraw = true
+opt.mouse = 'a'
 
 -- backups
-utils.opt('o', 'swapfile', false)
-utils.opt('o', 'backup', false)
-utils.opt('o', 'writebackup', false)
+opt.swapfile = false
+opt.backup = false
+opt.writebackup = false
 
 -- autocomplete
-utils.opt('o', 'completeopt', 'menuone,preview,noinsert,noselect')
-utils.opt('o', 'shortmess', 'filnxtToOFc') -- Don't pass messages to |ins-completion-menu|.
+opt.completeopt = 'menuone,preview,noinsert,noselect'
+opt.shortmess = 'filnxtToOFc'
 
 -- perfomance
-utils.opt('o', 'updatetime', 100)
-utils.opt('o', 'timeoutlen', 500)
-utils.opt('o', 'redrawtime', 1500)
-utils.opt("o", "ttimeoutlen", 10) -- Time out on key codes
+opt.updatetime = 100
+opt.timeoutlen = 500
+opt.redrawtime = 1500
+opt.ttimeoutlen = 10
 
--- theme
-utils.opt('o', 't_Co', '256')
-utils.opt('o', 'termguicolors', true)
+ -- theme
+opt.termguicolors = true
