@@ -11,7 +11,7 @@ cmd [[
 -- misc
 opt.hidden = true
 opt.encoding = 'utf-8'
-opt.backspace = 'eol,start,indent'
+opt.backspace = {'eol', 'start', 'indent'}
 opt.clipboard = 'unnamedplus'
 opt.matchpairs = {'(:)','{:}','[:]','<:>'}
 
@@ -29,6 +29,7 @@ opt.wildmenu = true
 opt.ignorecase = true
 opt.smartcase = true
 opt.wildignore = opt.wildignore + {'*/node_modules/*','*/wp-includes/*','*/wp-admin/*','*/vendor/*'}
+opt.hlsearch = false
 
 -- ui
 opt.number = true
@@ -36,9 +37,8 @@ opt.rnu = true
 opt.cursorline = true
 opt.signcolumn = 'yes'
 opt.laststatus = 2
-opt.scrolloff = 18
 opt.wrap = false
-opt.hlsearch = false
+opt.scrolloff = 18
 opt.list = true
 opt.listchars = {
 	tab = '❘-',
