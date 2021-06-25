@@ -39,6 +39,7 @@ opt.signcolumn = 'yes'
 opt.laststatus = 2
 opt.wrap = false
 opt.scrolloff = 18
+opt.sidescrolloff = 3  -- Lines to scroll horizontally
 opt.list = true
 opt.listchars = {
 	tab = '❘-',
@@ -50,6 +51,8 @@ opt.listchars = {
 opt.showmode = false
 opt.lazyredraw = true
 opt.mouse = 'a'
+opt.splitright = true  -- Open new split to the right
+opt.splitbelow = true  -- Open new split below
 
 -- backups
 opt.swapfile = false

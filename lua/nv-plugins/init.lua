@@ -1,28 +1,35 @@
-local packer = require("packer")
+local packer = require('packer')
 local use = packer.use
 local cmd = vim.cmd
 
 packer.startup(
 	function()
-		use "wbthomason/packer.nvim"
+		use 'wbthomason/packer.nvim'
 
 		-- lang stuff
-		use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+		use {
+			'nvim-treesitter/nvim-treesitter',
+			run = ':TSUpdate',
+			requires = {
+				-- Automatically end & rename tags
+				'windwp/nvim-ts-autotag',
+				-- Dynamically set commentstring based on cursor location in file
+				'JoosepAlviste/nvim-ts-context-commentstring',
+			}
+		}
 
 		-- theme stuff
 		use {
 		  'glepnir/galaxyline.nvim',
 			branch = 'main',
-			-- your statusline
 			config = function()
 				require 'lua.nv-statusline'
 			end,
-			-- some optional icons
 			requires = {'kyazdani42/nvim-web-devicons', opt = true},
 		}
 
 		use {
-			"wadackel/vim-dogrun",
+			'wadackel/vim-dogrun',
 			config = function()
 				vim.cmd 'color dogrun'
 				vim.cmd 'highlight Normal guibg=none'
@@ -31,7 +38,7 @@ packer.startup(
 
 		-- floating terminal
 		use {
-			"voldikss/vim-floaterm",
+			'voldikss/vim-floaterm',
 			opt = true,
 			cmd = {'FloatermToggle', 'FloatermNew', 'FloatermSend'},
 			config = function()
@@ -41,16 +48,16 @@ packer.startup(
 
 		-- file management
 		use {
-			"junegunn/fzf",
+			'junegunn/fzf',
 			run = function()
 				vim.fn['fzf#install']()
 			end
 		}
-		use "junegunn/fzf.vim"
+		use 'junegunn/fzf.vim'
 
 		-- git
-		use "tpope/vim-fugitive"
-		use "tpope/vim-rhubarb"
+		use 'tpope/vim-fugitive'
+		use 'tpope/vim-rhubarb'
 		use {
 			'lewis6991/gitsigns.nvim',
 			requires = {
@@ -62,11 +69,11 @@ packer.startup(
 		}
 
 		-- autocomplete/ide
-		use {"neoclide/coc.nvim", branch = "release"}
+		use {'neoclide/coc.nvim', branch = 'release'}
 
 	end
 )
 
-require("nv-plugins.nv-treesitter")
-require("nv-plugins.nv-floatterm")
+require('nv-plugins.nv-treesitter')
+require('nv-plugins.nv-floatterm')
 cmd 'source ~/.config/nvim/lua/nv-plugins/coc.vim'
