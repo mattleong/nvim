@@ -116,14 +116,76 @@ local buffer_not_empty = function()
 end
 
 local checkwidth = function()
-	return has_width_gt(35) and buffer_not_empty()
+	return has_width_gt(40) and in_git_repo() and buffer_not_empty()
+end
+
+local in_git_repo = function ()
+	local vcs = require('galaxyline.provider_vcs')
+	local branch_name = vcs.get_git_branch()
+
+	return branch_name ~= nil
 end
 
 local is_file = function()
 	return vim.bo.buftype ~= 'nofile'
 end
 
+local FilePathShortProvider = function()
+	local fp = vim.fn.fnamemodify(vim.fn.expand '%', ':~:.:h')
+	local tbl = split(fp, '/')
+	local len = #tbl
+
+	if len > 2 and not len == 3 and not tbl[0] == '~' then
+		return '…/' .. table.concat(tbl, '/', len - 1) .. '/'
+	else
+		return fp .. '/'
+	end
+end
+
+
 galaxy.short_line_list = {" "}
+
+gls.short_line_left[0] = {
+	FileIconShort = {
+		provider = { function()
+			return '  '
+		end, 'FileIcon' },
+		condition = buffer_not_empty,
+		highlight = {
+			require('galaxyline.provider_fileinfo').get_file_icon,
+			colors.bg,
+		},
+	},
+}
+
+gls.short_line_left[1] = {
+	FilePathShort = {
+		provider = FilePathShortProvider,
+		condition = function()
+			return is_file() and checkwidth()
+		end,
+		highlight = { colors.white, colors.bg },
+	},
+}
+
+gls.short_line_left[2] = {
+	FileNameShort = {
+		provider = get_current_file_name,
+		condition = buffer_not_empty,
+		highlight = { colors.white, colors.bg },
+	},
+}
+
+gls.short_line_right[0] = {
+	GitRootShort = {
+		provider = { GetGitRoot },
+		condition = function()
+			return has_width_gt(50) and condition.check_git_workspace
+		end,
+		icon = ' ',
+		highlight = { colors.white, colors.bg },
+	},
+}
 
 gls.left[1]= {
 	ViMode = {
@@ -173,17 +235,7 @@ gls.left[2] = {
 
 gls.left[3] = {
 	FilePath = {
-		provider = function()
-			local fp = vim.fn.fnamemodify(vim.fn.expand '%', ':~:.:h')
-			local tbl = split(fp, '/')
-			local len = #tbl
-
-			if len > 2 and not len == 3 and not tbl[0] == '~' then
-				return '…/' .. table.concat(tbl, '/', len - 1) .. '/'
-			else
-				return fp .. '/'
-			end
-		end,
+		provider = FilePathShortProvider,
 		condition = function()
 			return is_file() and checkwidth()
 		end,
@@ -316,4 +368,3 @@ gls.right[30] = {
 		separator_highlight = { colors.lightPurple, colors.lightPurple },
 	},
 }
-
