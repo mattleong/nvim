@@ -11,9 +11,9 @@ cmd [[
 -- misc
 opt.hidden = true
 opt.encoding = 'utf-8'
-opt.backspace = {'eol', 'start', 'indent'}
 opt.clipboard = 'unnamedplus'
-opt.matchpairs = {'(:)','{:}','[:]','<:>'}
+opt.backspace = { 'eol', 'start', 'indent' }
+opt.matchpairs = { '(:)','{:}','[:]','<:>' }
 
 -- indention
 opt.autoindent = true
@@ -28,7 +28,7 @@ opt.shiftwidth = indent
 opt.wildmenu = true
 opt.ignorecase = true
 opt.smartcase = true
-opt.wildignore = opt.wildignore + {'*/node_modules/*','*/wp-includes/*','*/wp-admin/*','*/vendor/*'}
+opt.wildignore = opt.wildignore +{ '*/node_modules/*','*/wp-includes/*','*/wp-admin/*','*/vendor/*' }
 opt.hlsearch = false
 
 -- ui
@@ -60,7 +60,7 @@ opt.backup = false
 opt.writebackup = false
 
 -- autocomplete
-opt.completeopt = {'menuone','preview','noinsert','noselect'}
+opt.completeopt = { 'menuone', 'preview', 'noinsert', 'noselect' }
 opt.shortmess = opt.shortmess + 'c'
 
 -- perfomance

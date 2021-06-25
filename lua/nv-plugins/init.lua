@@ -23,7 +23,7 @@ packer.startup(
 		  'glepnir/galaxyline.nvim',
 			branch = 'main',
 			config = function()
-				require 'lua.nv-statusline'
+				require 'nv-statusline'
 			end,
 			requires = {'kyazdani42/nvim-web-devicons', opt = true},
 		}
