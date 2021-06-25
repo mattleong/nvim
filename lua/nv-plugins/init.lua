@@ -51,6 +51,15 @@ packer.startup(
 		-- git
 		use "tpope/vim-fugitive"
 		use "tpope/vim-rhubarb"
+		use {
+			'lewis6991/gitsigns.nvim',
+			requires = {
+				'nvim-lua/plenary.nvim'
+			},
+			config = function()
+				require('gitsigns').setup()
+			end
+		}
 
 		-- autocomplete/ide
 		use {"neoclide/coc.nvim", branch = "release"}
