@@ -29,7 +29,7 @@ end
 local GetGitRoot = function()
 	local git_dir = require('galaxyline.provider_vcs').get_git_dir()
 	if not git_dir then
-		return ''
+		return 'not a git dir '
 	end
 
 	local git_root = git_dir:gsub('/.git/?$', '')
@@ -93,7 +93,7 @@ end
 local LineColumn = function()
 	local line_column = fileinfo.line_column()
 	line_column = line_column:gsub("%s+", "")
-	return line_column
+	return '' .. line_column
 end
 
 galaxy.short_line_list = {'coc-explorer'}
@@ -132,8 +132,8 @@ gls.short_line_left[2] = {
 
 gls.short_line_right[0] = {
 	GitRootShort = {
-		provider = { GetGitRoot },
-		condition = check_width_and_git,
+		provider = GetGitRoot,
+		condition = condition.buffer_not_empty,
 		icon = ' ',
 		highlight = { colors.white, colors.bg },
 	},
@@ -172,6 +172,9 @@ gls.left[1]= {
 	},
 }
 
+--  
+--  
+
 gls.left[2] = {
 	FileIcon = {
 		provider = {
@@ -189,9 +192,7 @@ gls.left[2] = {
 gls.left[3] = {
 	FilePath = {
 		provider = FilePathShortProvider,
-		condition = function()
-			return is_file() and check_width_and_git()
-		end,
+		condition = condition.buffer_not_empty,
 		highlight = { colors.white, colors.matteBlue },
 	},
 }
@@ -201,15 +202,13 @@ gls.left[4] = {
 		provider = 'FileName',
 		condition = condition.buffer_not_empty,
 		highlight = { colors.white, colors.matteBlue },
-		separator = '',
-		separator_highlight = { colors.matteBlue, colors.matteBlue },
 	},
 }
 
 gls.left[6] = {
 	DiffAdd = {
 		provider = 'DiffAdd',
-		icon = '  ',
+		icon = '   ',
 		condition = check_width_and_git,
 		highlight = { colors.bg, colors.green },
 	},
@@ -219,7 +218,7 @@ gls.left[7] = {
 	DiffModified = {
 		provider = 'DiffModified',
 		condition = check_width_and_git,
-		icon = '  ',
+		icon = '   ',
 		highlight = { colors.bg, colors.orange }, -- test
 	},
 }
@@ -228,20 +227,27 @@ gls.left[8] = {
 	DiffRemove = {
 		provider = 'DiffRemove',
 		condition = check_width_and_git,
-		icon = '  ',
+		icon = '   ',
 		highlight = { colors.bg, colors.red },
 	},
 }
 
 gls.left[9] = {
+	Whitespace = {
+		provider = function() return ' ' end,
+		highlight = { colors.bg, colors.bg },
+	}
+}
+
+gls.left[10] = {
 	GitIcon = {
-		provider = function() return '   ' end,
+		provider = function() return '  ' end,
 		condition = condition.check_git_workspace,
 		highlight = { colors.pink, colors.bg },
 	}
 }
 
-gls.left[10] = {
+gls.left[11] = {
 	GitBranch = {
 		provider = function()
 			local vcs = require('galaxyline.provider_vcs')
@@ -267,7 +273,6 @@ gls.right[0] = {
 gls.right[1] = {
 	Whitespace = {
 		provider = function() return ' ' end,
-		highlight = { colors.bg, colors.bg },
 	}
 }
 
@@ -282,7 +287,6 @@ gls.right[2] = {
 gls.right[3] = {
 	Whitespace = {
 		provider = function() return ' ' end,
-		highlight = { colors.bg, colors.bg },
 	}
 }
 
@@ -304,9 +308,7 @@ gls.right[5] = {
 gls.right[6] = {
 	GitRoot = {
 		provider = GetGitRoot,
-		condition = function()
-			return condition.hide_in_width() and condition.check_git_workspace()
-		end,
+		condition = condition.buffer_not_empty,
 		icon = ' ',
 		highlight = { colors.white, colors.matteBlue },
 		separator = ' ',
