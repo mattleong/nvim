@@ -1,6 +1,7 @@
 local galaxy = require('galaxyline');
 local gls = galaxy.section
 local condition = require 'galaxyline.condition'
+local fileinfo = require('galaxyline.provider_fileinfo')
 
 local colors = {
 	brown = '#a9323d',
@@ -87,6 +88,12 @@ local FilePathShortProvider = function()
 	else
 		return fp .. '/'
 	end
+end
+
+local LineColumn = function()
+	local line_column = fileinfo.line_column()
+	line_column = line_column:gsub("%s+", "")
+	return line_column
 end
 
 galaxy.short_line_list = {'coc-explorer'}
@@ -202,11 +209,9 @@ gls.left[4] = {
 gls.left[6] = {
 	DiffAdd = {
 		provider = 'DiffAdd',
-		condition = check_width_and_git,
 		icon = '  ',
+		condition = check_width_and_git,
 		highlight = { colors.bg, colors.green },
-		separator = '',
-		separator_highlight = { colors.green, colors.green },
 	},
 }
 
@@ -215,9 +220,7 @@ gls.left[7] = {
 		provider = 'DiffModified',
 		condition = check_width_and_git,
 		icon = '  ',
-		highlight = { colors.bg, colors.orange },
-		separator = '',
-		separator_highlight = { colors.orange, colors.orange },
+		highlight = { colors.bg, colors.orange }, -- test
 	},
 }
 
@@ -225,8 +228,6 @@ gls.left[8] = {
 	DiffRemove = {
 		provider = 'DiffRemove',
 		condition = check_width_and_git,
-		separator = '',
-		separator_highlight = { colors.red, colors.red },
 		icon = '  ',
 		highlight = { colors.bg, colors.red },
 	},
@@ -234,7 +235,7 @@ gls.left[8] = {
 
 gls.left[9] = {
 	GitIcon = {
-		provider = function() return '  ' end,
+		provider = function() return '   ' end,
 		condition = condition.check_git_workspace,
 		highlight = { colors.pink, colors.bg },
 	}
@@ -285,7 +286,7 @@ gls.right[3] = {
 	}
 }
 
-gls.right[10] = {
+gls.right[4] = {
 	DiagnosticError = {
 		provider = 'DiagnosticError',
 		icon = '  ',
@@ -293,24 +294,41 @@ gls.right[10] = {
 	}
 }
 
-gls.right[20] = {
+gls.right[5] = {
+	Whitespace = {
+		provider = function() return ' ' end,
+		highlight = { colors.bg, colors.bg },
+	}
+}
+
+gls.right[6] = {
 	GitRoot = {
-		provider = { GetGitRoot },
+		provider = GetGitRoot,
 		condition = function()
 			return condition.hide_in_width() and condition.check_git_workspace()
 		end,
 		icon = ' ',
 		highlight = { colors.white, colors.matteBlue },
-		separator = '',
+		separator = ' ',
 		separator_highlight = { colors.matteBlue, colors.matteBlue },
 	},
 }
 
-gls.right[30] = {
+gls.right[7] = {
+	LineColumn = {
+		provider = {
+			LineColumn,
+			function() return ' ' end,
+		},
+		highlight = { colors.bg, colors.lightPurple },
+		separator = ' ',
+		separator_highlight = { colors.lightPurple, colors.lightPurple },
+	}
+}
+
+gls.right[8] = {
 	PerCent = {
 		provider = 'LinePercent',
-		separator = ' ',
 		highlight = { colors.bg, colors.lightPurple },
-		separator_highlight = { colors.lightPurple, colors.lightPurple },
 	},
 }
