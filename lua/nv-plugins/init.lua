@@ -10,7 +10,6 @@ packer.startup(
 		use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
 
 		-- theme stuff
---		use "itchyny/lightline.vim"
 		use {
 		  'glepnir/galaxyline.nvim',
 			branch = 'main',
@@ -19,13 +18,14 @@ packer.startup(
 				require 'lua.nv-statusline'
 			end,
 			-- some optional icons
-			requires = {'kyazdani42/nvim-web-devicons', opt = true}
+			requires = {'kyazdani42/nvim-web-devicons', opt = true},
 		}
+
 		use {
 			"wadackel/vim-dogrun",
 			config = function()
-				vim.cmd('color dogrun')
-				vim.cmd('highlight Normal guibg=none')
+				vim.cmd 'color dogrun'
+				vim.cmd 'highlight Normal guibg=none'
 			end,
 		}
 
@@ -33,7 +33,10 @@ packer.startup(
 		use {
 			"voldikss/vim-floaterm",
 			opt = true,
-			cmd = {'FloatermToggle', 'FloatermNew', 'FloatermSend'}
+			cmd = {'FloatermToggle', 'FloatermNew', 'FloatermSend'},
+			config = function()
+				vim.cmd 'hi FloatermNC guibg=gray'
+			end,
 		}
 
 		-- file management
@@ -57,6 +60,4 @@ packer.startup(
 
 require("nv-plugins.nv-treesitter")
 require("nv-plugins.nv-floatterm")
-
 cmd 'source ~/.config/nvim/lua/nv-plugins/coc.vim'
--- cmd 'source ~/.config/nvim/lua/nv-plugins/lightline.vim'

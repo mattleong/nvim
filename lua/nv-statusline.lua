@@ -3,6 +3,9 @@ local gls = galaxy.section
 local condition = require 'galaxyline.condition'
 local fileinfo = require('galaxyline.provider_fileinfo')
 
+local leftbracket = "" -- Curve.
+local rightbracket = "" -- Curve.
+
 local colors = {
 	brown = '#a9323d',
 	aqua = '#5b9c9c',
@@ -96,7 +99,7 @@ local LineColumn = function()
 	return '' .. line_column
 end
 
-galaxy.short_line_list = {'coc-explorer'}
+galaxy.short_line_list = { 'coc-explorer', 'packer' }
 
 gls.short_line_left[0] = {
 	FileIconShort = {
