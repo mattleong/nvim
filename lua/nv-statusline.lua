@@ -1,5 +1,4 @@
 local galaxy = require('galaxyline');
-local fileinfo = require('galaxyline.provider_fileinfo')
 local gls = galaxy.section
 local condition = require 'galaxyline.condition'
 
@@ -58,16 +57,6 @@ local mode_color = function()
 	end
 end
 
-local function file_readonly()
-	if vim.bo.filetype == 'help' then
-		return ''
-	end
-	if vim.bo.readonly == true then
-		return '  '
-	end
-	return ''
-end
-
 local function split(str, sep)
 	local res = {}
 	local n = 1
@@ -80,21 +69,8 @@ local function split(str, sep)
 	return res
 end
 
-local function has_width_gt(cols)
-	-- Check if the windows width is greater than a given number of columns
-	return vim.fn.winwidth(0) / 2 > cols
-end
-
-local buffer_empty = function()
-	return vim.fn.empty(vim.fn.expand '%:t') == 1
-end
-
-local buffer_not_empty = function()
-	return not buffer_empty()
-end
-
-local checkwidth = function()
-	return has_width_gt(40) and condition.check_git_workspace() and buffer_not_empty()
+local check_width_and_git = function()
+	return condition.hide_in_width() and condition.check_git_workspace() and condition.buffer_not_empty()
 end
 
 local is_file = function()
@@ -113,15 +89,15 @@ local FilePathShortProvider = function()
 	end
 end
 
-
-galaxy.short_line_list = {" "}
+galaxy.short_line_list = {'coc-explorer'}
 
 gls.short_line_left[0] = {
 	FileIconShort = {
-		provider = { function()
-			return '  '
-		end, 'FileIcon' },
-		condition = buffer_not_empty,
+		provider = {
+			function() return '  ' end,
+			'FileIcon',
+		},
+		condition = condition.buffer_not_empty,
 		highlight = {
 			require('galaxyline.provider_fileinfo').get_file_icon,
 			colors.bg,
@@ -133,7 +109,7 @@ gls.short_line_left[1] = {
 	FilePathShort = {
 		provider = FilePathShortProvider,
 		condition = function()
-			return is_file() and checkwidth()
+			return is_file() and check_width_and_git()
 		end,
 		highlight = { colors.white, colors.bg },
 	},
@@ -142,7 +118,7 @@ gls.short_line_left[1] = {
 gls.short_line_left[2] = {
 	FileNameShort = {
 		provider = 'FileName',
-		condition = buffer_not_empty,
+		condition = condition.buffer_not_empty,
 		highlight = { colors.white, colors.bg },
 	},
 }
@@ -150,9 +126,7 @@ gls.short_line_left[2] = {
 gls.short_line_right[0] = {
 	GitRootShort = {
 		provider = { GetGitRoot },
-		condition = function()
-			return has_width_gt(50) and condition.check_git_workspace
-		end,
+		condition = check_width_and_git,
 		icon = ' ',
 		highlight = { colors.white, colors.bg },
 	},
@@ -177,7 +151,7 @@ gls.left[1]= {
 			local alias = aliases[vim.fn.mode():byte()]
 			local mode
 			if alias ~= nil then
-				if has_width_gt(35) then
+				if condition.hide_in_width() then
 					mode = alias
 				else
 					mode = alias:sub(1, 1)
@@ -193,10 +167,11 @@ gls.left[1]= {
 
 gls.left[2] = {
 	FileIcon = {
-		provider = { function()
-			return '  '
-		end, 'FileIcon' },
-		condition = buffer_not_empty,
+		provider = {
+			function() return '  ' end,
+			'FileIcon',
+		},
+		condition = condition.buffer_not_empty,
 		highlight = {
 			require('galaxyline.provider_fileinfo').get_file_icon,
 			colors.matteBlue,
@@ -208,7 +183,7 @@ gls.left[3] = {
 	FilePath = {
 		provider = FilePathShortProvider,
 		condition = function()
-			return is_file() and checkwidth()
+			return is_file() and check_width_and_git()
 		end,
 		highlight = { colors.white, colors.matteBlue },
 	},
@@ -217,7 +192,7 @@ gls.left[3] = {
 gls.left[4] = {
 	FileName = {
 		provider = 'FileName',
-		condition = buffer_not_empty,
+		condition = condition.buffer_not_empty,
 		highlight = { colors.white, colors.matteBlue },
 		separator = '',
 		separator_highlight = { colors.matteBlue, colors.matteBlue },
@@ -227,7 +202,7 @@ gls.left[4] = {
 gls.left[6] = {
 	DiffAdd = {
 		provider = 'DiffAdd',
-		condition = checkwidth,
+		condition = check_width_and_git,
 		icon = '  ',
 		highlight = { colors.bg, colors.green },
 		separator = '',
@@ -238,7 +213,7 @@ gls.left[6] = {
 gls.left[7] = {
 	DiffModified = {
 		provider = 'DiffModified',
-		condition = checkwidth,
+		condition = check_width_and_git,
 		icon = '  ',
 		highlight = { colors.bg, colors.orange },
 		separator = '',
@@ -249,7 +224,7 @@ gls.left[7] = {
 gls.left[8] = {
 	DiffRemove = {
 		provider = 'DiffRemove',
-		condition = checkwidth,
+		condition = check_width_and_git,
 		separator = '',
 		separator_highlight = { colors.red, colors.red },
 		icon = '  ',
@@ -322,7 +297,7 @@ gls.right[20] = {
 	GitRoot = {
 		provider = { GetGitRoot },
 		condition = function()
-			return has_width_gt(50) and condition.check_git_workspace
+			return condition.hide_in_width() and condition.check_git_workspace()
 		end,
 		icon = ' ',
 		highlight = { colors.white, colors.matteBlue },
