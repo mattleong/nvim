@@ -1,4 +1,5 @@
 local galaxy = require('galaxyline');
+local fileinfo = require('galaxyline.provider_fileinfo')
 local gls = galaxy.section
 local condition = require 'galaxyline.condition'
 
@@ -57,13 +58,6 @@ local mode_color = function()
 	end
 end
 
-local in_git_repo = function ()
-	local vcs = require('galaxyline.provider_vcs')
-	local branch_name = vcs.get_git_branch()
-
-	return branch_name ~= nil
-end
-
 local function file_readonly()
 	if vim.bo.filetype == 'help' then
 		return ''
@@ -72,22 +66,6 @@ local function file_readonly()
 		return '  '
 	end
 	return ''
-end
-
-local function get_current_file_name()
-	local file = vim.fn.expand '%:t'
-	if vim.fn.empty(file) == 1 then
-		return ''
-	end
-	if string.len(file_readonly()) ~= 0 then
-		return file .. file_readonly()
-	end
-	if vim.bo.modifiable then
-		if vim.bo.modified then
-			return file .. '  '
-		end
-	end
-	return file .. ' '
 end
 
 local function split(str, sep)
@@ -116,14 +94,7 @@ local buffer_not_empty = function()
 end
 
 local checkwidth = function()
-	return has_width_gt(40) and in_git_repo() and buffer_not_empty()
-end
-
-local in_git_repo = function ()
-	local vcs = require('galaxyline.provider_vcs')
-	local branch_name = vcs.get_git_branch()
-
-	return branch_name ~= nil
+	return has_width_gt(40) and condition.check_git_workspace() and buffer_not_empty()
 end
 
 local is_file = function()
@@ -170,7 +141,7 @@ gls.short_line_left[1] = {
 
 gls.short_line_left[2] = {
 	FileNameShort = {
-		provider = get_current_file_name,
+		provider = 'FileName',
 		condition = buffer_not_empty,
 		highlight = { colors.white, colors.bg },
 	},
@@ -245,7 +216,7 @@ gls.left[3] = {
 
 gls.left[4] = {
 	FileName = {
-		provider = get_current_file_name,
+		provider = 'FileName',
 		condition = buffer_not_empty,
 		highlight = { colors.white, colors.matteBlue },
 		separator = '',
@@ -289,8 +260,8 @@ gls.left[8] = {
 gls.left[9] = {
 	GitIcon = {
 		provider = function() return '  ' end,
-		condition = in_git_repo,
-		highlight = {colors.pink, colors.bg},
+		condition = condition.check_git_workspace,
+		highlight = { colors.pink, colors.bg },
 	}
 }
 
@@ -304,8 +275,8 @@ gls.left[10] = {
 			end
 			return branch_name .. " "
 		end,
-		condition = in_git_repo,
-		highlight = {colors.white, colors.bg},
+		condition = condition.check_git_workspace,
+		highlight = { colors.white, colors.bg },
 	}
 }
 
@@ -313,14 +284,14 @@ gls.right[0] = {
 	DiagnosticInfo = {
 		provider = 'DiagnosticInfo',
 		icon = '  ',
-		highlight = {colors.blue, colors.bg},
+		highlight = { colors.blue, colors.bg },
 	}
 }
 
 gls.right[1] = {
-	Space = {
-		provider = function () return ' ' end,
-		highlight = {colors.bg, colors.bg},
+	Whitespace = {
+		provider = function() return ' ' end,
+		highlight = { colors.bg, colors.bg },
 	}
 }
 
@@ -328,14 +299,14 @@ gls.right[2] = {
 	DiagnosticWarn = {
 		provider = 'DiagnosticWarn',
 		icon = '  ',
-		highlight = {colors.orange, colors.bg},
+		highlight = { colors.orange, colors.bg },
 	}
 }
 
 gls.right[3] = {
-	Space = {
-		provider = function () return ' ' end,
-		highlight = {colors.bg, colors.bg},
+	Whitespace = {
+		provider = function() return ' ' end,
+		highlight = { colors.bg, colors.bg },
 	}
 }
 
@@ -343,7 +314,7 @@ gls.right[10] = {
 	DiagnosticError = {
 		provider = 'DiagnosticError',
 		icon = '  ',
-		highlight = {colors.red, colors.bg},
+		highlight = { colors.red, colors.bg },
 	}
 }
 
