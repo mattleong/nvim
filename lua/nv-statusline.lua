@@ -1,10 +1,8 @@
 local galaxy = require('galaxyline');
 local gls = galaxy.section
+local vcs = require('galaxyline.provider_vcs')
 local condition = require 'galaxyline.condition'
 local fileinfo = require('galaxyline.provider_fileinfo')
-
-local leftbracket = "" -- Curve.
-local rightbracket = "" -- Curve.
 
 local colors = {
 	brown = '#a9323d',
@@ -24,6 +22,35 @@ local colors = {
 	bg = '#111219',
 	matteBlue = '#545c8c',
 }
+
+local icons = {
+	brackets = {
+		left = '',
+		right = '',
+	},
+	ghost = '',
+}
+
+local DiffBracketProvider = function(type, diff_type)
+	return function()
+		local bracket = icons.brackets[type]
+		local result = nil
+
+		if (diff_type == 'add') then
+			result = vcs.diff_add()
+		elseif (diff_type == 'modified') then
+			result = vcs.diff_modified()
+		elseif (diff_type == 'remove') then
+			result = vcs.diff_remove()
+		end
+
+		if (result ~= nil and bracket) then
+			return bracket
+		end
+
+		return ''
+	end
+end
 
 local function get_basename(file)
 	return file:match '^.+/(.+)$'
@@ -101,242 +128,289 @@ end
 
 galaxy.short_line_list = { 'coc-explorer', 'packer' }
 
-gls.short_line_left[0] = {
-	FileIconShort = {
-		provider = {
-			function() return '  ' end,
-			'FileIcon',
+gls.left = {
+	{
+		Ghost = {
+			provider = {
+				function() return '  ' .. icons.ghost end,
+			},
+			separator = icons.brackets.right,
+			highlight = { colors.bg, colors.purple },
+			separator_highlight = { colors.purple, colors.bg }
 		},
-		condition = condition.buffer_not_empty,
-		highlight = {
-			require('galaxyline.provider_fileinfo').get_file_icon,
-			colors.bg,
-		},
 	},
-}
-
-gls.short_line_left[1] = {
-	FilePathShort = {
-		provider = FilePathShortProvider,
-		condition = function()
-			return is_file() and check_width_and_git()
-		end,
-		highlight = { colors.white, colors.bg },
-	},
-}
-
-gls.short_line_left[2] = {
-	FileNameShort = {
-		provider = 'FileName',
-		condition = condition.buffer_not_empty,
-		highlight = { colors.white, colors.bg },
-	},
-}
-
-gls.short_line_right[0] = {
-	GitRootShort = {
-		provider = GetGitRoot,
-		condition = condition.buffer_not_empty,
-		icon = ' ',
-		highlight = { colors.white, colors.bg },
-	},
-}
-
-gls.left[1]= {
-	ViMode = {
-		provider = function()
-			local aliases = {
-				[110] = 'NORMAL',
-				[105] = 'INSERT',
-				[99] = 'COMMAND',
-				[116] = 'TERMINAL',
-				[118] = 'VISUAL',
-				[22] = 'V-BLOCK',
-				[86] = 'V-LINE',
-				[82] = 'REPLACE',
-				[115] = 'SELECT',
-				[83] = 'S-LINE',
-			}
-			vim.api.nvim_command('hi GalaxyViMode guibg=' .. mode_color())
-			local alias = aliases[vim.fn.mode():byte()]
-			local mode
-			if alias ~= nil then
-				if condition.hide_in_width() then
-					mode = alias
+	{
+		ViMode = {
+			provider = function()
+				local aliases = {
+					[110] = 'NORMAL',
+					[105] = 'INSERT',
+					[99] = 'COMMAND',
+					[116] = 'TERMINAL',
+					[118] = 'VISUAL',
+					[22] = 'V-BLOCK',
+					[86] = 'V-LINE',
+					[82] = 'REPLACE',
+					[115] = 'SELECT',
+					[83] = 'S-LINE',
+				}
+				vim.api.nvim_command('hi GalaxyViMode guibg=' .. mode_color())
+				local alias = aliases[vim.fn.mode():byte()]
+				local mode
+				if alias ~= nil then
+					if condition.hide_in_width() then
+						mode = alias
+					else
+						mode = alias:sub(1, 1)
+					end
 				else
-					mode = alias:sub(1, 1)
+					mode = vim.fn.mode():byte()
 				end
-			else
-				mode = vim.fn.mode():byte()
-			end
-			return '  ' .. mode .. ' '
-		end,
-		highlight = { colors.bg, colors.bg, 'bold' },
-	},
-}
-
---  
---  
-
-gls.left[2] = {
-	FileIcon = {
-		provider = {
-			function() return '  ' end,
-			'FileIcon',
-		},
-		condition = condition.buffer_not_empty,
-		highlight = {
-			require('galaxyline.provider_fileinfo').get_file_icon,
-			colors.matteBlue,
+				return ' ' .. mode .. ' '
+			end,
+			highlight = { colors.bg, colors.bg, 'bold' },
 		},
 	},
-}
-
-gls.left[3] = {
-	FilePath = {
-		provider = FilePathShortProvider,
-		condition = condition.buffer_not_empty,
-		highlight = { colors.white, colors.matteBlue },
-	},
-}
-
-gls.left[4] = {
-	FileName = {
-		provider = 'FileName',
-		condition = condition.buffer_not_empty,
-		highlight = { colors.white, colors.matteBlue },
-	},
-}
-
-gls.left[6] = {
-	DiffAdd = {
-		provider = 'DiffAdd',
-		icon = '   ',
-		condition = check_width_and_git,
-		highlight = { colors.bg, colors.green },
-	},
-}
-
-gls.left[7] = {
-	DiffModified = {
-		provider = 'DiffModified',
-		condition = check_width_and_git,
-		icon = '   ',
-		highlight = { colors.bg, colors.orange }, -- test
-	},
-}
-
-gls.left[8] = {
-	DiffRemove = {
-		provider = 'DiffRemove',
-		condition = check_width_and_git,
-		icon = '   ',
-		highlight = { colors.bg, colors.red },
-	},
-}
-
-gls.left[9] = {
-	Whitespace = {
-		provider = function() return ' ' end,
-		highlight = { colors.bg, colors.bg },
-	}
-}
-
-gls.left[10] = {
-	GitIcon = {
-		provider = function() return '  ' end,
-		condition = condition.check_git_workspace,
-		highlight = { colors.pink, colors.bg },
-	}
-}
-
-gls.left[11] = {
-	GitBranch = {
-		provider = function()
-			local vcs = require('galaxyline.provider_vcs')
-			local branch_name = vcs.get_git_branch()
-			if (not branch_name) then
-				return ''
-			end
-			if (string.len(branch_name) > 28) then
-				return string.sub(branch_name, 1, 25).."..."
-			end
-			return branch_name .. " "
-		end,
-		condition = condition.check_git_workspace,
-		highlight = { colors.white, colors.bg },
-	}
-}
-
-gls.right[0] = {
-	DiagnosticInfo = {
-		provider = 'DiagnosticInfo',
-		icon = '  ',
-		highlight = { colors.blue, colors.bg },
-	}
-}
-
-gls.right[1] = {
-	Whitespace = {
-		provider = function() return ' ' end,
-	}
-}
-
-gls.right[2] = {
-	DiagnosticWarn = {
-		provider = 'DiagnosticWarn',
-		icon = '  ',
-		highlight = { colors.orange, colors.bg },
-	}
-}
-
-gls.right[3] = {
-	Whitespace = {
-		provider = function() return ' ' end,
-	}
-}
-
-gls.right[4] = {
-	DiagnosticError = {
-		provider = 'DiagnosticError',
-		icon = '  ',
-		highlight = { colors.red, colors.bg },
-	}
-}
-
-gls.right[5] = {
-	Whitespace = {
-		provider = function() return ' ' end,
-		highlight = { colors.bg, colors.bg },
-	}
-}
-
-gls.right[6] = {
-	GitRoot = {
-		provider = GetGitRoot,
-		condition = condition.buffer_not_empty,
-		icon = ' ',
-		highlight = { colors.white, colors.matteBlue },
-		separator = ' ',
-		separator_highlight = { colors.matteBlue, colors.matteBlue },
-	},
-}
-
-gls.right[7] = {
-	LineColumn = {
-		provider = {
-			LineColumn,
-			function() return ' ' end,
+	{
+		FileIcon = {
+			provider = {
+				function() return '  ' end,
+				'FileIcon',
+			},
+			condition = condition.buffer_not_empty,
+			highlight = {
+				require('galaxyline.provider_fileinfo').get_file_icon,
+				colors.matteBlue,
+			},
 		},
-		highlight = { colors.bg, colors.lightPurple },
-		separator = ' ',
-		separator_highlight = { colors.lightPurple, colors.lightPurple },
-	}
-}
-
-gls.right[8] = {
-	PerCent = {
-		provider = 'LinePercent',
-		highlight = { colors.bg, colors.lightPurple },
+	},
+	{
+		FilePath = {
+			provider = FilePathShortProvider,
+			condition = condition.buffer_not_empty,
+			highlight = { colors.white, colors.matteBlue },
+		},
+	},
+	{
+		FileName = {
+			provider = 'FileName',
+			condition = condition.buffer_not_empty,
+			highlight = { colors.white, colors.matteBlue },
+		},
+	},
+	{
+		DiffAddLeftBracket = {
+			provider = {
+				DiffBracketProvider('left', 'add'),
+			},
+			condition = check_width_and_git,
+			highlight = { colors.green, colors.bg },
+		}
+	},
+	{
+		DiffAdd = {
+			provider = 'DiffAdd',
+			icon = '  ',
+			condition = check_width_and_git,
+			highlight = { colors.bg, colors.green },
+		},
+	},
+	{
+		DiffAddRightBracket = {
+			provider = {
+				DiffBracketProvider('right', 'add'),
+			},
+			condition = check_width_and_git,
+			highlight = { colors.green, colors.bg },
+		}
+	},
+	{
+		DiffModifiedLeftBracket = {
+			provider = {
+				DiffBracketProvider('left', 'modified'),
+			},
+			condition = check_width_and_git,
+			highlight = { colors.orange, colors.bg },
+		}
+	},
+	{
+		DiffModified = {
+			provider = 'DiffModified',
+			condition = check_width_and_git,
+			icon = '  ',
+			highlight = { colors.bg, colors.orange }, -- test
+		},
+	},
+	{
+		DiffModifiedRightBracket = {
+			provider = {
+				DiffBracketProvider('right', 'modified'),
+			},
+			condition = check_width_and_git,
+			highlight = { colors.orange, colors.bg },
+		}
+	},
+	{
+		DiffRemoveLeftBracket = {
+			provider = {
+				DiffBracketProvider('left', 'remove'),
+			},
+			condition = check_width_and_git,
+			highlight = { colors.red, colors.bg },
+		}
+	},
+	{
+		DiffRemove = {
+			provider = 'DiffRemove',
+			condition = check_width_and_git,
+			icon = '  ',
+			highlight = { colors.bg, colors.red },
+		},
+	},
+	{
+		DiffRemoveRightBracket = {
+			provider = {
+				DiffBracketProvider('right', 'remove'),
+			},
+			condition = check_width_and_git,
+			highlight = { colors.red, colors.bg },
+		}
+	},
+	{
+		Whitespace = {
+			provider = function() return ' ' end,
+			highlight = { colors.bg, colors.bg },
+		}
+	},
+	{
+		GitIcon = {
+			provider = function() return '  ' end,
+			condition = condition.check_git_workspace,
+			highlight = { colors.pink, colors.bg },
+		}
+	},
+	{
+		GitBranch = {
+			provider = function()
+				local vcs = require('galaxyline.provider_vcs')
+				local branch_name = vcs.get_git_branch()
+				if (not branch_name) then
+					return ''
+				end
+				if (string.len(branch_name) > 28) then
+					return string.sub(branch_name, 1, 25).."..."
+				end
+				return branch_name .. " "
+			end,
+			condition = condition.check_git_workspace,
+			highlight = { colors.white, colors.bg },
+		}
 	},
 }
+
+gls.right = {
+	{
+		DiagnosticInfo = {
+			provider = 'DiagnosticInfo',
+			icon = '  ',
+			highlight = { colors.blue, colors.bg },
+		}
+	},
+	{
+		Whitespace = {
+			provider = function() return ' ' end,
+		}
+	},
+	{
+		DiagnosticWarn = {
+			provider = 'DiagnosticWarn',
+			icon = '  ',
+			highlight = { colors.orange, colors.bg },
+		}
+	},
+	{
+		Whitespace = {
+			provider = function() return ' ' end,
+		}
+	},
+	{
+		DiagnosticError = {
+			provider = 'DiagnosticError',
+			icon = '  ',
+			highlight = { colors.red, colors.bg },
+		}
+	},
+	{
+		Whitespace = {
+			provider = function() return ' ' end,
+		}
+	},
+	{
+		GitRoot = {
+			provider = GetGitRoot,
+			condition = condition.buffer_not_empty,
+			icon = ' ',
+			highlight = { colors.white, colors.matteBlue },
+			separator = ' ',
+			separator_highlight = { colors.matteBlue, colors.matteBlue },
+		},
+	},
+	{
+		LineColumn = {
+			provider = {
+				LineColumn,
+				function() return ' ' end,
+			},
+			highlight = { colors.bg, colors.lightPurple },
+			separator = ' ',
+			separator_highlight = { colors.lightPurple, colors.lightPurple },
+		}
+	},
+	{
+		PerCent = {
+			provider = 'LinePercent',
+			highlight = { colors.bg, colors.lightPurple },
+		},
+	},
+}
+
+gls.short_line_left = {
+	{
+		FileIconShort = {
+			provider = {
+				function() return '  ' end,
+				'FileIcon',
+			},
+			condition = condition.buffer_not_empty,
+			highlight = {
+				require('galaxyline.provider_fileinfo').get_file_icon,
+				colors.bg,
+			},
+		},
+	},
+	{
+		FilePathShort = {
+			provider = FilePathShortProvider,
+			condition = function()
+				return is_file() and check_width_and_git()
+			end,
+			highlight = { colors.white, colors.bg },
+		},
+	},
+	{
+		FileNameShort = {
+			provider = 'FileName',
+			condition = condition.buffer_not_empty,
+			highlight = { colors.white, colors.bg },
+		},
+	},
+	{
+		GitRootShort = {
+			provider = GetGitRoot,
+			condition = condition.buffer_not_empty,
+			icon = ' ',
+			highlight = { colors.white, colors.bg },
+		},
+	},
+}
+

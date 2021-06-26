@@ -14,8 +14,7 @@ cmd [[packadd packer.nvim]]
 
 packer.startup(
 	function()
-
-		use { 'wbthomason/packer.nvim', opt = true }
+		use 'wbthomason/packer.nvim'
 
 		-- lang stuff
 		use {
