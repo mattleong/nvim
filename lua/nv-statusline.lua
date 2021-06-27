@@ -11,11 +11,11 @@ local colors = {
 	aqua = '#5b9c9c',
 	blue = '#5d8fac',
 	darkBlue = '#557486',
-	purple = '#6f78be',
+	purple = '#5e3e5e',
 	lightPurple = '#959acb',
 	red = '#c2616b',
 	beige = '#686765',
-	yellow = '#8e8a6f',
+	yellow = '#a8a384',
 	orange = '#c59f96',
 	darkOrange = '#79564f',
 	pink = '#9e619e',
@@ -24,7 +24,8 @@ local colors = {
 	lightGreen = '#5aa46c',
 	white = '#9ea3c0',
 	bg = '#111219',
-	matteBlue = '#545c8c',
+	bluee = '#545c8c',
+	matteBlue = '#5d6ad8',
 }
 
 local icons = {
@@ -42,16 +43,16 @@ local icons = {
 
 local get_mode = function()
 	local mode_colors = {
-		[110] = { 'NORMAL', colors.purple, colors.lightPurple },
-		[105] = { 'INSERT', colors.matteBlue, colors.blue },
-		[99] = { 'COMMAND', colors.pink, colors.salmon},
-		[116] = { 'TERMINAL', colors.blue, },
-		[118] = { 'VISUAL', colors.pink, },
-		[22] = { 'V-BLOCK', colors.pink, },
-		[86] = { 'V-LINE', colors.pink, },
-		[82] = { 'REPLACE', colors.red, },
-		[115] = { 'SELECT', colors.red, },
-		[83] = { 'S-LINE', colors.red, },
+		[110] = { 'NORMAL', colors.bluee, colors.lightPurple },
+		[105] = { 'INSERT', colors.purple, colors.pink },
+		[99] = { 'COMMAND', colors.beige, colors.yellow },
+		[116] = { 'TERMINAL', colors.aqua, colors.blue },
+		[118] = { 'VISUAL', colors.pink, colors.blue, },
+		[22] = { 'V-BLOCK', colors.pink, colors.blue, },
+		[86] = { 'V-LINE', colors.pink, colors.blue, },
+		[82] = { 'REPLACE', colors.brown, colors.red, },
+		[115] = { 'SELECT', colors.brown, colors.red, },
+		[83] = { 'S-LINE', colors.brown, colors.red, },
 	}
 
 	local mode_data = mode_colors[vim.fn.mode():byte()]
@@ -74,10 +75,6 @@ end
 
 local check_width_and_git = function()
 	return condition.hide_in_width() and condition.check_git_workspace() and condition.buffer_not_empty()
-end
-
-local is_file = function()
-	return vim.bo.buftype ~= 'nofile'
 end
 
 local highlight = function(group, bg, fg, gui)
@@ -150,10 +147,6 @@ gls.left = {
 		ViMode = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
-
-				if (mode_nested == nil) then
-					mode_nested = colors.lightPurple
-				end
 
 				highlight('GalaxyViMode', mode_color, colors.bg, 'bold')
 				highlight('GalaxyViModeInv', mode_nested, mode_color, 'bold')
@@ -457,9 +450,7 @@ gls.short_line_left = {
 	{
 		FilePathShort = {
 			provider = FilePathShortProvider,
-			condition = function()
-				return is_file() and check_width_and_git()
-			end,
+			condition = condition.buffer_not_empty,
 			highlight = { colors.white, colors.bg },
 		},
 	},
