@@ -23,18 +23,27 @@ local colors = {
 	matteBlue = '#545c8c',
 }
 
+
 local icons = {
 	brackets = {
 		left = '',
 		right = '',
 	},
-	ghost = '',
+	ghost = '👻',
 }
+
+local get_formatted_bracket = function(type)
+	local bracket = icons.brackets[type]
+	if (type == 'left' and bracket) then
+		bracket = '  ' .. bracket
+	end
+	return bracket
+end
 
 local DiffBracketProvider = function(type, diff_type)
 	return function()
-		local bracket = icons.brackets[type]
 		local result = nil
+		local bracket = get_formatted_bracket(type)
 
 		if (diff_type == 'add') then
 			result = vcs.diff_add()
@@ -172,6 +181,15 @@ gls.left = {
 		},
 	},
 	{
+		FileNameLeftBracket = {
+			provider = function()
+				return get_formatted_bracket('left')
+			end,
+			highlight = { colors.matteBlue, colors.bg },
+			condition = condition.buffer_not_empty,
+		}
+	},
+	{
 		FileIcon = {
 			provider = {
 				function() return '  ' end,
@@ -196,6 +214,15 @@ gls.left = {
 			provider = 'FileName',
 			condition = condition.buffer_not_empty,
 			highlight = { colors.white, colors.matteBlue },
+		},
+	},
+	{
+		FileNameRightBracket = {
+			provider = function()
+				return get_formatted_bracket('right')
+			end,
+			highlight = { colors.matteBlue, colors.bg },
+			condition = condition.buffer_not_empty,
 		},
 	},
 	{

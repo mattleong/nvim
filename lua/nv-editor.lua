@@ -31,6 +31,8 @@ opt.smartcase = true
 opt.wildignore = opt.wildignore +{ '*/node_modules/*','*/wp-includes/*','*/wp-admin/*','*/vendor/*' }
 opt.hlsearch = false
 
+local test
+
 -- ui
 opt.number = true
 opt.rnu = true
