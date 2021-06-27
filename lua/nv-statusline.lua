@@ -35,6 +35,7 @@ local icons = {
 	arrow_left = '', -- e0b3
 	arrow_right = '', -- e0b1
 	ghost = '👻',
+	warn = '',
 }
 
 local get_formatted_bracket = function(type)
@@ -155,7 +156,6 @@ gls.left = {
 				local label, mode_color = unpack(get_mode())
 
 				highlight('GalaxyViMode', mode_color, colors.bg, 'bold')
-				highlight('GalaxyViModeInv', colors.bg, mode_color, 'bold')
 				highlight('GalaxyViModeNested', colors.lightPurple, mode_color, 'bold')
 
 				return '  ' .. label .. ' '
@@ -229,13 +229,7 @@ gls.left = {
 			end,
 			condition = condition.check_git_workspace,
 			highlight = { colors.white, colors.bg },
-		}
-	},
-	{
-		DiffAddLeftBracket = {
-			provider = DiffBracketProvider('arrow_right_filled', 'add'),
-			condition = check_width_and_git,
-			highlight = { colors.bg, colors.green },
+			separator = icons.arrow_right,
 		}
 	},
 	{
@@ -243,21 +237,14 @@ gls.left = {
 			provider = 'DiffAdd',
 			icon = '   ',
 			condition = check_width_and_git,
-			highlight = { colors.bg, colors.green },
+			highlight = { colors.green, colors.bg },
 		},
 	},
 	{
 		DiffAddRightBracket = {
-			provider = DiffBracketProvider('arrow_right_filled', 'add'),
+			provider = DiffBracketProvider('arrow_right', 'add'),
 			condition = check_width_and_git,
 			highlight = { colors.green, colors.bg },
-		}
-	},
-	{
-		DiffModifiedLeftBracket = {
-			provider = DiffBracketProvider('arrow_right_filled', 'modified'),
-			condition = check_width_and_git,
-			highlight = { colors.bg, colors.orange },
 		}
 	},
 	{
@@ -265,21 +252,15 @@ gls.left = {
 			provider = 'DiffModified',
 			condition = check_width_and_git,
 			icon = '   ',
-			highlight = { colors.bg, colors.orange }, -- test
+			highlight = { colors.orange, colors.bg },
 		},
 	},
+
 	{
 		DiffModifiedRightBracket = {
-			provider = DiffBracketProvider('arrow_right_filled', 'modified'),
+			provider = DiffBracketProvider('arrow_right', 'modified'),
 			condition = check_width_and_git,
 			highlight = { colors.orange, colors.bg },
-		}
-	},
-	{
-		DiffRemoveLeftBracket = {
-			provider = DiffBracketProvider('arrow_right_filled', 'remove'),
-			condition = check_width_and_git,
-			highlight = { colors.bg, colors.red },
 		}
 	},
 	{
@@ -287,54 +268,98 @@ gls.left = {
 			provider = 'DiffRemove',
 			condition = check_width_and_git,
 			icon = '   ',
-			highlight = { colors.bg, colors.red },
+			highlight = { colors.red, colors.bg },
 		},
 	},
 	{
 		DiffRemoveRightBracket = {
-			provider = DiffBracketProvider('arrow_right_filled', 'remove'),
+			provider = DiffBracketProvider('arrow_right', 'remove'),
 			condition = check_width_and_git,
 			highlight = { colors.red, colors.bg },
 		}
 	},
 }
 
-local DiagnosticProvider = function(type, diag_type)
+local DiagnosticBracketProvider = function(icon_type, diag_type)
 	return function()
 		local result = nil
-		local icon = icons[type]
 		if (diag_type == 'warn') then
 			result = diag.get_diagnostic_warn()
+		elseif (diag_type == 'error') then
+			result = diag.get_diagnostic_error()
+		elseif (diag_type == 'info') then
+			result = diag.get_diagnostic_info()
 		end
 
-		if (result ~= nil) then
-			return ''
+		if (result ~= nil and result ~= '') then
+			return icons[icon_type]
 		end
 
-		return result
+		return ''
 	end
 end
 
 gls.right = {
 	{
+		DiagnosticInfoLeftBracket = {
+			provider = DiagnosticBracketProvider('rounded_left_filled', 'info'),
+			highlight = 'NVDiagnosticInfoInv',
+		}
+	},
+	{
 		DiagnosticInfo = {
-			provider = 'DiagnosticInfo',
+			provider = function()
+				highlight('NVDiagnosticInfo', colors.blue, colors.bg, 'bold')
+				local result = diag.get_diagnostic_error()
+				if (result ~= nil) then
+					return result
+				end
+
+				return ''
+			end,
 			icon = '  ',
-			highlight = { colors.blue, colors.bg },
+			highlight = 'NVDiagnosticInfo',
 			condition = check_width_and_git,
+		}
+	},
+	{
+		DiagnosticInfoRightBracket = {
+			provider = DiagnosticBracketProvider('rounded_right_filled', 'info'),
+			highlight = 'NVDiagnosticInfoInv',
 		}
 	},
 	{
 		Whitespace = {
 			provider = function() return ' ' end,
+		}
+	},
+	{
+		DiagnosticWarnLeftBracket = {
+			provider = DiagnosticBracketProvider('rounded_left_filled', 'warn'),
+			highlight = 'NVDiagnosticWarnInv',
 		}
 	},
 	{
 		DiagnosticWarn = {
-			provider = 'DiagnosticWarn',
-			icon = '  ',
-			highlight = { colors.orange, colors.bg },
+			provider = function()
+				highlight('NVDiagnosticWarn', colors.orange, colors.bg, 'bold')
+				local result = diag.get_diagnostic_warn()
+				if (result ~= nil) then
+					return result
+				end
+
+				return ''
+			end,
+			highlight = 'NVDiagnosticWarn',
+			icon = ' ' .. icons.warn .. ' ',
 			condition = check_width_and_git,
+			highlight = 'NVDiagnosticWarn',
+		}
+	},
+	{
+		DiagnosticWarnRightBracket = {
+			provider = DiagnosticBracketProvider('rounded_right_filled', 'warn'),
+			highlight = 'NVDiagnosticWarnInv',
 		}
 	},
 	{
@@ -343,11 +368,31 @@ gls.right = {
 		}
 	},
 	{
+		DiagnosticErrorLeftBracket = {
+			provider = DiagnosticBracketProvider('rounded_left_filled', 'error'),
+			highlight = 'NVDiagnosticErrorInv',
+		}
+	},
+	{
 		DiagnosticError = {
-			provider = 'DiagnosticError',
+			provider = function()
+				highlight('NVDiagnosticError', colors.red, colors.bg, 'bold')
+				local result = diag.get_diagnostic_error()
+				if (result ~= nil) then
+					return result
+				end
+
+				return ''
+			end,
 			icon = '  ',
-			highlight = { colors.red, colors.bg },
+			highlight = 'NVDiagnosticError',
 			condition = check_width_and_git,
+		}
+	},
+	{
+		DiagnosticErrorRightBracket = {
+			provider = DiagnosticBracketProvider('rounded_right_filled', 'error'),
+			highlight = 'NVDiagnosticErrorInv',
 		}
 	},
 	{
