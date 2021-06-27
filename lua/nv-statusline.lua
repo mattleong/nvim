@@ -1,8 +1,10 @@
 local galaxy = require('galaxyline');
 local gls = galaxy.section
 local vcs = require('galaxyline.provider_vcs')
+local diag = require('galaxyline.provider_diagnostic')
 local condition = require 'galaxyline.condition'
 local fileinfo = require('galaxyline.provider_fileinfo')
+local utils = require('nv-utils');
 
 local colors = {
 	brown = '#a9323d',
@@ -22,7 +24,7 @@ local colors = {
 	lightGreen = '#5aa46c',
 	white = '#9ea3c0',
 	bg = '#111219',
-	matteBlue = '#363e7f',
+	matteBlue = '#545c8c',
 }
 
 local icons = {
@@ -66,39 +68,24 @@ local DiffBracketProvider = function(type, diff_type)
 end
 
 
-local function get_basename(file)
-	return file:match '^.+/(.+)$'
-end
 
-local GetGitRoot = function()
-	local git_dir = require('galaxyline.provider_vcs').get_git_dir()
-	if not git_dir then
-		return 'not a git dir '
-	end
-
-	local git_root = git_dir:gsub('/.git/?$', '')
-	return get_basename(git_root) .. ' '
-end
-
-local mode_color = function()
+local get_mode = function()
 	local mode_colors = {
-		[110] = colors.green,
-		[105] = colors.blue,
-		[99] = colors.green,
-		[116] = colors.blue,
-		[118] = colors.purple,
-		[22] = colors.purple,
-		[86] = colors.purple,
-		[82] = colors.red,
-		[115] = colors.red,
-		[83] = colors.red,
+		[110] = { 'NORMAL', colors.green, },
+		[105] = { 'INSERT', colors.blue, },
+		[99] = { 'COMMAND', colors.green, },
+		[116] = { 'TERMINAL', colors.blue, },
+		[118] = { 'VISUAL', colors.purple, },
+		[22] = { 'V-BLOCK', colors.purple, },
+		[86] = { 'V-LINE', colors.purple, },
+		[82] = { 'REPLACE', colors.red, },
+		[115] = { 'SELECT', colors.red, },
+		[83] = { 'S-LINE', colors.red, },
 	}
 
-	local color = mode_colors[vim.fn.mode():byte()]
-	if color ~= nil then
-		return color
-	else
-		return colors.purple
+	local mode_data = mode_colors[vim.fn.mode():byte()]
+	if mode_data ~= nil then
+		return mode_data
 	end
 end
 
@@ -165,53 +152,24 @@ gls.left = {
 	{
 		ViMode = {
 			provider = function()
-				local aliases = {
-					[110] = 'NORMAL',
-					[105] = 'INSERT',
-					[99] = 'COMMAND',
-					[116] = 'TERMINAL',
-					[118] = 'VISUAL',
-					[22] = 'V-BLOCK',
-					[86] = 'V-LINE',
-					[82] = 'REPLACE',
-					[115] = 'SELECT',
-					[83] = 'S-LINE',
-				}
+				local label, mode_color = unpack(get_mode())
 
-				highlight('GalaxyViMode', mode_color(), colors.bg, 'bold')
-				highlight('GalaxyViModeInv', colors.bg, mode_color(), 'bold')
-				highlight('GalaxyViModeNested', colors.matteBlue, mode_color(), 'bold')
+				highlight('GalaxyViMode', mode_color, colors.bg, 'bold')
+				highlight('GalaxyViModeInv', colors.bg, mode_color, 'bold')
+				highlight('GalaxyViModeNested', colors.matteBlue, mode_color, 'bold')
 
-				local alias = aliases[vim.fn.mode():byte()]
-				local mode
-				if alias ~= nil then
-					if condition.hide_in_width() then
-						mode = alias
-					else
-						mode = alias:sub(1, 1)
-					end
-				else
-					mode = vim.fn.mode():byte()
-				end
-				return '  ' .. mode .. ' '
+				return '  ' .. label .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
+			separator = icons.arrow_right_filled,
+			separator_highlight = 'GalaxyViModeNested',
 		},
 	},
 	{
-		FileNameLeftBracket = {
-			provider = function()
-				return icons.arrow_right_filled
-			end,
-			highlight = 'GalaxyViModeNested',
-			condition = condition.buffer_not_empty,
-		}
-	},
-	{
 		GitRoot = {
-			provider = GetGitRoot,
+			provider = utils.get_git_root,
 			condition = condition.buffer_not_empty,
-			icon = '   ',
+			icon = '  ',
 			highlight = { colors.white, colors.matteBlue },
 			separator = icons.arrow_right .. ' ',
 			separator_highlight = { colors.white, colors.matteBlue }
@@ -243,7 +201,36 @@ gls.left = {
 			separator_highlight = { colors.matteBlue, colors.bg }
 		},
 	},
-
+	{
+		Whitespace = {
+			provider = function() return ' ' end,
+			highlight = { colors.bg, colors.bg },
+		}
+	},
+	{
+		GitIcon = {
+			provider = function() return '  ' end,
+			condition = condition.check_git_workspace,
+			highlight = { colors.pink, colors.bg },
+		}
+	},
+	{
+		GitBranch = {
+			provider = function()
+				local vcs = require('galaxyline.provider_vcs')
+				local branch_name = vcs.get_git_branch()
+				if (not branch_name) then
+					return ''
+				end
+				if (string.len(branch_name) > 28) then
+					return string.sub(branch_name, 1, 25).."..."
+				end
+				return branch_name .. " "
+			end,
+			condition = condition.check_git_workspace,
+			highlight = { colors.white, colors.bg },
+		}
+	},
 	{
 		DiffAddLeftBracket = {
 			provider = DiffBracketProvider('arrow_right_filled', 'add'),
@@ -310,37 +297,23 @@ gls.left = {
 			highlight = { colors.red, colors.bg },
 		}
 	},
-	{
-		Whitespace = {
-			provider = function() return ' ' end,
-			highlight = { colors.bg, colors.bg },
-		}
-	},
-	{
-		GitIcon = {
-			provider = function() return '  ' end,
-			condition = condition.check_git_workspace,
-			highlight = { colors.pink, colors.bg },
-		}
-	},
-	{
-		GitBranch = {
-			provider = function()
-				local vcs = require('galaxyline.provider_vcs')
-				local branch_name = vcs.get_git_branch()
-				if (not branch_name) then
-					return ''
-				end
-				if (string.len(branch_name) > 28) then
-					return string.sub(branch_name, 1, 25).."..."
-				end
-				return branch_name .. " "
-			end,
-			condition = condition.check_git_workspace,
-			highlight = { colors.white, colors.bg },
-		}
-	},
 }
+
+local DiagnosticProvider = function(type, diag_type)
+	return function()
+		local result = nil
+		local icon = icons[type]
+		if (diag_type == 'warn') then
+			result = diag.get_diagnostic_warn()
+		end
+
+		if (result ~= nil) then
+			return ''
+		end
+
+		return result
+	end
+end
 
 gls.right = {
 	{
@@ -348,6 +321,7 @@ gls.right = {
 			provider = 'DiagnosticInfo',
 			icon = '  ',
 			highlight = { colors.blue, colors.bg },
+			condition = check_width_and_git,
 		}
 	},
 	{
@@ -360,6 +334,7 @@ gls.right = {
 			provider = 'DiagnosticWarn',
 			icon = '  ',
 			highlight = { colors.orange, colors.bg },
+			condition = check_width_and_git,
 		}
 	},
 	{
@@ -370,16 +345,11 @@ gls.right = {
 	{
 		DiagnosticError = {
 			provider = 'DiagnosticError',
+	--		provider = DiagnosticProvider('arrow_left', 'error'),
 			icon = '  ',
 			highlight = { colors.red, colors.bg },
+			condition = check_width_and_git,
 		}
-	},
-	{
-		Whitespace = {
-			provider = function() return ' ' end,
-		}
-	},
-	{
 	},
 	{
 		LCBracket = {
@@ -448,7 +418,7 @@ gls.short_line_left = {
 	},
 	{
 		GitRootShort = {
-			provider = GetGitRoot,
+			provider = utils.get_git_root,
 			condition = condition.buffer_not_empty,
 			icon = ' ',
 			highlight = { colors.white, colors.bg },
