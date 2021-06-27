@@ -34,8 +34,8 @@ local icons = {
 
 local get_formatted_bracket = function(type)
 	local bracket = icons.brackets[type]
-	if (type == 'left' and bracket) then
-		bracket = '  ' .. bracket
+	if (type == 'left') then
+		bracket = '' .. bracket
 	end
 	return bracket
 end
@@ -135,6 +135,11 @@ local LineColumn = function()
 	return '' .. line_column
 end
 
+local mode_hightlight = function(bg, fg)
+	vim.api.nvim_command(string.format('hi GalaxyViMode guibg=%s guifg=%s gui=bold', bg, fg))
+	vim.api.nvim_command(string.format('hi GalaxyViModeInv guibg=%s guifg=%s gui=bold', fg, bg))
+end
+
 galaxy.short_line_list = { 'coc-explorer', 'packer' }
 
 gls.left = {
@@ -143,9 +148,7 @@ gls.left = {
 			provider = {
 				function() return '  ' .. icons.ghost end,
 			},
-			separator = icons.brackets.right,
-			highlight = { colors.bg, colors.purple },
-			separator_highlight = { colors.purple, colors.bg }
+			highlight = 'GalaxyViMode',
 		},
 	},
 	{
@@ -163,7 +166,8 @@ gls.left = {
 					[115] = 'SELECT',
 					[83] = 'S-LINE',
 				}
-				vim.api.nvim_command('hi GalaxyViMode guibg=' .. mode_color())
+
+				mode_hightlight(mode_color(), colors.bg)
 				local alias = aliases[vim.fn.mode():byte()]
 				local mode
 				if alias ~= nil then
@@ -175,9 +179,11 @@ gls.left = {
 				else
 					mode = vim.fn.mode():byte()
 				end
-				return ' ' .. mode .. ' '
+				return '  ' .. mode .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
+			separator = get_formatted_bracket('right'),
+			separator_highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
