@@ -22,7 +22,7 @@ local colors = {
 	lightGreen = '#5aa46c',
 	white = '#9ea3c0',
 	bg = '#111219',
-	matteBlue = '#545c8c',
+	matteBlue = '#363e7f',
 }
 
 local icons = {
@@ -180,6 +180,8 @@ gls.left = {
 
 				highlight('GalaxyViMode', mode_color(), colors.bg, 'bold')
 				highlight('GalaxyViModeInv', colors.bg, mode_color(), 'bold')
+				highlight('GalaxyViModeNested', colors.matteBlue, mode_color(), 'bold')
+
 				local alias = aliases[vim.fn.mode():byte()]
 				local mode
 				if alias ~= nil then
@@ -194,8 +196,6 @@ gls.left = {
 				return '  ' .. mode .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
-			separator = icons.arrow_right_filled,
-			separator_highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
@@ -203,7 +203,7 @@ gls.left = {
 			provider = function()
 				return icons.arrow_right_filled
 			end,
-			highlight = { colors.bg, colors.matteBlue },
+			highlight = 'GalaxyViModeNested',
 			condition = condition.buffer_not_empty,
 		}
 	},
