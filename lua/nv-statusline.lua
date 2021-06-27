@@ -38,38 +38,6 @@ local icons = {
 	warn = '',
 }
 
-local get_formatted_bracket = function(type)
-	local bracket = icons.brackets[type]
-	if (type == 'left') then
-		bracket = '' .. bracket
-	end
-	return bracket
-end
-
--- @TODO use this for brackets, duh
-local DiffBracketProvider = function(type, diff_type)
-	return function()
-		local result = nil
-		local bracket = icons[type]
-
-		if (diff_type == 'add') then
-			result = vcs.diff_add()
-		elseif (diff_type == 'modified') then
-			result = vcs.diff_modified()
-		elseif (diff_type == 'remove') then
-			result = vcs.diff_remove()
-		end
-
-		if (result ~= nil and bracket) then
-			return bracket
-		end
-
-		return ''
-	end
-end
-
-
-
 local get_mode = function()
 	local mode_colors = {
 		[110] = { 'NORMAL', colors.purple, },
@@ -110,6 +78,11 @@ local is_file = function()
 	return vim.bo.buftype ~= 'nofile'
 end
 
+local highlight = function(group, bg, fg, gui)
+	vim.api.nvim_command(string.format('hi %s guibg=%s guifg=%s gui=%s', group, bg, fg, gui))
+	vim.api.nvim_command(string.format('hi %sInv guibg=%s guifg=%s gui=%s', group, fg, bg, gui))
+end
+
 local FilePathShortProvider = function()
 	local fp = vim.fn.fnamemodify(vim.fn.expand '%', ':~:.:h')
 	local tbl = split(fp, '/')
@@ -134,9 +107,16 @@ local PercentProvider = function()
 	return '≡' .. line_column
 end
 
-local highlight = function(group, bg, fg, gui)
-	vim.api.nvim_command(string.format('hi %s guibg=%s guifg=%s gui=%s', group, bg, fg, gui))
-	vim.api.nvim_command(string.format('hi %sInv guibg=%s guifg=%s gui=%s', group, fg, bg, gui))
+local BracketProvider = function(icon_type, callback)
+	return function()
+		local result = callback()
+
+		if (result ~= nil and result ~= '') then
+			return icons[icon_type]
+		end
+
+		return ''
+	end
 end
 
 galaxy.short_line_list = { 'coc-explorer', 'packer' }
@@ -242,9 +222,9 @@ gls.left = {
 	},
 	{
 		DiffAddRightBracket = {
-			provider = DiffBracketProvider('arrow_right', 'add'),
+			provider = BracketProvider('arrow_right', vcs.diff_add),
 			condition = check_width_and_git,
-			highlight = { colors.green, colors.bg },
+			highlight = 'GalaxyDiffAdd',
 		}
 	},
 	{
@@ -258,9 +238,9 @@ gls.left = {
 
 	{
 		DiffModifiedRightBracket = {
-			provider = DiffBracketProvider('arrow_right', 'modified'),
+			provider = BracketProvider('arrow_right', vcs.diff_modified),
 			condition = check_width_and_git,
-			highlight = { colors.orange, colors.bg },
+			highlight = 'GalaxyDiffModified',
 		}
 	},
 	{
@@ -273,36 +253,17 @@ gls.left = {
 	},
 	{
 		DiffRemoveRightBracket = {
-			provider = DiffBracketProvider('arrow_right', 'remove'),
+			provider = BracketProvider('arrow_right', vcs.diff_remove),
 			condition = check_width_and_git,
-			highlight = { colors.red, colors.bg },
+			highlight = 'GalaxyDiffRemove',
 		}
 	},
 }
 
-local DiagnosticBracketProvider = function(icon_type, diag_type)
-	return function()
-		local result = nil
-		if (diag_type == 'warn') then
-			result = diag.get_diagnostic_warn()
-		elseif (diag_type == 'error') then
-			result = diag.get_diagnostic_error()
-		elseif (diag_type == 'info') then
-			result = diag.get_diagnostic_info()
-		end
-
-		if (result ~= nil and result ~= '') then
-			return icons[icon_type]
-		end
-
-		return ''
-	end
-end
-
 gls.right = {
 	{
 		DiagnosticInfoLeftBracket = {
-			provider = DiagnosticBracketProvider('rounded_left_filled', 'info'),
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_info),
 			highlight = 'NVDiagnosticInfoInv',
 		}
 	},
@@ -310,7 +271,7 @@ gls.right = {
 		DiagnosticInfo = {
 			provider = function()
 				highlight('NVDiagnosticInfo', colors.blue, colors.bg, 'bold')
-				local result = diag.get_diagnostic_error()
+				local result = diag.get_diagnostic_info()
 				if (result ~= nil) then
 					return result
 				end
@@ -324,7 +285,7 @@ gls.right = {
 	},
 	{
 		DiagnosticInfoRightBracket = {
-			provider = DiagnosticBracketProvider('rounded_right_filled', 'info'),
+			provider = BracketProvider('rounded_right_filled', diag.get_diagnostic_info),
 			highlight = 'NVDiagnosticInfoInv',
 		}
 	},
@@ -335,7 +296,7 @@ gls.right = {
 	},
 	{
 		DiagnosticWarnLeftBracket = {
-			provider = DiagnosticBracketProvider('rounded_left_filled', 'warn'),
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_warn),
 			highlight = 'NVDiagnosticWarnInv',
 		}
 	},
@@ -358,7 +319,7 @@ gls.right = {
 	},
 	{
 		DiagnosticWarnRightBracket = {
-			provider = DiagnosticBracketProvider('rounded_right_filled', 'warn'),
+			provider = BracketProvider('rounded_right_filled', diag.get_diagnostic_warn),
 			highlight = 'NVDiagnosticWarnInv',
 		}
 	},
@@ -369,7 +330,7 @@ gls.right = {
 	},
 	{
 		DiagnosticErrorLeftBracket = {
-			provider = DiagnosticBracketProvider('rounded_left_filled', 'error'),
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_error),
 			highlight = 'NVDiagnosticErrorInv',
 		}
 	},
@@ -391,7 +352,7 @@ gls.right = {
 	},
 	{
 		DiagnosticErrorRightBracket = {
-			provider = DiagnosticBracketProvider('rounded_right_filled', 'error'),
+			provider = BracketProvider('rounded_right_filled', diag.get_diagnostic_error),
 			highlight = 'NVDiagnosticErrorInv',
 		}
 	},
