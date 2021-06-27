@@ -71,13 +71,13 @@ end
 
 local get_mode = function()
 	local mode_colors = {
-		[110] = { 'NORMAL', colors.green, },
+		[110] = { 'NORMAL', colors.purple, },
 		[105] = { 'INSERT', colors.blue, },
-		[99] = { 'COMMAND', colors.green, },
+		[99] = { 'COMMAND', colors.orange, },
 		[116] = { 'TERMINAL', colors.blue, },
-		[118] = { 'VISUAL', colors.purple, },
-		[22] = { 'V-BLOCK', colors.purple, },
-		[86] = { 'V-LINE', colors.purple, },
+		[118] = { 'VISUAL', colors.pink, },
+		[22] = { 'V-BLOCK', colors.pink, },
+		[86] = { 'V-LINE', colors.pink, },
 		[82] = { 'REPLACE', colors.red, },
 		[115] = { 'SELECT', colors.red, },
 		[83] = { 'S-LINE', colors.red, },
@@ -124,7 +124,7 @@ end
 local LineColumnProvider = function()
 	local line_column = fileinfo.line_column()
 	line_column = line_column:gsub("%s+", "")
-	return '' .. line_column
+	return ' ' .. line_column
 end
 
 local PercentProvider = function()
@@ -156,7 +156,7 @@ gls.left = {
 
 				highlight('GalaxyViMode', mode_color, colors.bg, 'bold')
 				highlight('GalaxyViModeInv', colors.bg, mode_color, 'bold')
-				highlight('GalaxyViModeNested', colors.matteBlue, mode_color, 'bold')
+				highlight('GalaxyViModeNested', colors.lightPurple, mode_color, 'bold')
 
 				return '  ' .. label .. ' '
 			end,
@@ -170,9 +170,9 @@ gls.left = {
 			provider = utils.get_git_root,
 			condition = condition.buffer_not_empty,
 			icon = '  ',
-			highlight = { colors.white, colors.matteBlue },
+			highlight = { colors.bg, colors.lightPurple },
 			separator = icons.arrow_right .. ' ',
-			separator_highlight = { colors.white, colors.matteBlue }
+			separator_highlight = { colors.bg, colors.lightPurple }
 		},
 	},
 	{
@@ -180,8 +180,8 @@ gls.left = {
 			provider = 'FileIcon',
 			condition = condition.buffer_not_empty,
 			highlight = {
-				require('galaxyline.provider_fileinfo').get_file_icon,
-				colors.matteBlue,
+				colors.bg,
+				colors.lightPurple,
 			},
 		},
 	},
@@ -189,16 +189,16 @@ gls.left = {
 		FilePath = {
 			provider = FilePathShortProvider,
 			condition = condition.buffer_not_empty,
-			highlight = { colors.white, colors.matteBlue },
+			highlight = { colors.bg, colors.lightPurple },
 		},
 	},
 	{
 		FileName = {
 			provider = 'FileName',
 			condition = condition.buffer_not_empty,
-			highlight = { colors.white, colors.matteBlue },
+			highlight = { colors.bg, colors.lightPurple },
 			separator = icons.arrow_right_filled,
-			separator_highlight = { colors.matteBlue, colors.bg }
+			separator_highlight = { colors.lightPurple, colors.bg }
 		},
 	},
 	{
@@ -241,7 +241,7 @@ gls.left = {
 	{
 		DiffAdd = {
 			provider = 'DiffAdd',
-			icon = '  ',
+			icon = '   ',
 			condition = check_width_and_git,
 			highlight = { colors.bg, colors.green },
 		},
@@ -264,7 +264,7 @@ gls.left = {
 		DiffModified = {
 			provider = 'DiffModified',
 			condition = check_width_and_git,
-			icon = '  ',
+			icon = '   ',
 			highlight = { colors.bg, colors.orange }, -- test
 		},
 	},
@@ -286,7 +286,7 @@ gls.left = {
 		DiffRemove = {
 			provider = 'DiffRemove',
 			condition = check_width_and_git,
-			icon = '  ',
+			icon = '   ',
 			highlight = { colors.bg, colors.red },
 		},
 	},
@@ -345,21 +345,9 @@ gls.right = {
 	{
 		DiagnosticError = {
 			provider = 'DiagnosticError',
-	--		provider = DiagnosticProvider('arrow_left', 'error'),
 			icon = '  ',
 			highlight = { colors.red, colors.bg },
 			condition = check_width_and_git,
-		}
-	},
-	{
-		LCBracket = {
-			provider = {
-				function()
-					return icons.arrow_left_filled
-				end
-			},
-			condition = check_width_and_git,
-			highlight = 'GalaxyViModeInv',
 		}
 	},
 	{
@@ -369,8 +357,8 @@ gls.right = {
 				function() return ' ' end,
 			},
 			highlight = 'GalaxyViMode',
-			separator = ' ',
-			separator_highlight = 'GalaxyViMode',
+			separator = icons.arrow_left_filled,
+			separator_highlight = 'GalaxyViModeInv',
 		}
 	},
 	{
