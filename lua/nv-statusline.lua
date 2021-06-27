@@ -4,6 +4,12 @@ local vcs = require('galaxyline.provider_vcs')
 local condition = require 'galaxyline.condition'
 local fileinfo = require('galaxyline.provider_fileinfo')
 
+local sep = {
+  right_filled = '', -- e0b2
+  left_filled = '', -- e0b0
+  right = '', -- e0b3
+  left = '', -- e0b1
+}
 local colors = {
 	brown = '#a9323d',
 	aqua = '#5b9c9c',
@@ -23,11 +29,16 @@ local colors = {
 	matteBlue = '#545c8c',
 }
 
-
 local icons = {
 	brackets = {
 		left = '',
 		right = '',
+	},
+	arrows = {
+		left_filled = '', -- e0b2
+		right_filled = '', -- e0b0
+		left = '', -- e0b3
+		right = '', -- e0b1
 	},
 	ghost = '👻',
 }
@@ -129,10 +140,16 @@ local FilePathShortProvider = function()
 	end
 end
 
-local LineColumn = function()
+local LineColumnProvider = function()
 	local line_column = fileinfo.line_column()
 	line_column = line_column:gsub("%s+", "")
 	return '' .. line_column
+end
+
+local PercentProvider = function()
+	local line_column = fileinfo.current_line_percent()
+	line_column = line_column:gsub("%s+", "")
+	return '≡' .. line_column
 end
 
 local mode_hightlight = function(bg, fg)
@@ -196,11 +213,18 @@ gls.left = {
 		}
 	},
 	{
+		GitRoot = {
+			provider = GetGitRoot,
+			condition = condition.buffer_not_empty,
+			icon = ' ',
+			highlight = { colors.white, colors.matteBlue },
+			separator = icons.arrows.right .. ' ',
+			separator_highlight = { colors.white, colors.matteBlue }
+		},
+	},
+	{
 		FileIcon = {
-			provider = {
-				function() return '  ' end,
-				'FileIcon',
-			},
+			provider = 'FileIcon',
 			condition = condition.buffer_not_empty,
 			highlight = {
 				require('galaxyline.provider_fileinfo').get_file_icon,
@@ -379,19 +403,22 @@ gls.right = {
 		}
 	},
 	{
-		GitRoot = {
-			provider = GetGitRoot,
-			condition = condition.buffer_not_empty,
-			icon = ' ',
-			highlight = { colors.white, colors.matteBlue },
-			separator = ' ',
-			separator_highlight = { colors.matteBlue, colors.matteBlue },
-		},
+	},
+	{
+		LCBracket = {
+			provider = {
+				function()
+					return get_formatted_bracket('left')
+				end
+			},
+			condition = check_width_and_git,
+			highlight = { colors.lightPurple, colors.bg },
+		}
 	},
 	{
 		LineColumn = {
 			provider = {
-				LineColumn,
+				LineColumnProvider,
 				function() return ' ' end,
 			},
 			highlight = { colors.bg, colors.lightPurple },
@@ -401,8 +428,13 @@ gls.right = {
 	},
 	{
 		PerCent = {
-			provider = 'LinePercent',
+			provider = {
+				PercentProvider,
+				function() return ' ' end,
+			},
 			highlight = { colors.bg, colors.lightPurple },
+			separator = icons.arrows.left .. ' ',
+			separator_highlight = { colors.bg, colors.lightPurple },
 		},
 	},
 }
