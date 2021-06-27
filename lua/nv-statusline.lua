@@ -26,16 +26,12 @@ local colors = {
 }
 
 local icons = {
-	brackets = {
-		left = '',
-		right = '',
-	},
-	arrows = {
-		left_filled = '', -- e0b2
-		right_filled = '', -- e0b0
-		left = '', -- e0b3
-		right = '', -- e0b1
-	},
+	rounded_left_filled = '',
+	rounded_right_filled = '',
+	arrow_left_filled = '', -- e0b2
+	arrow_right_filled = '', -- e0b0
+	arrow_left = '', -- e0b3
+	arrow_right = '', -- e0b1
 	ghost = '👻',
 }
 
@@ -47,10 +43,11 @@ local get_formatted_bracket = function(type)
 	return bracket
 end
 
+-- @TODO use this for brackets, duh
 local DiffBracketProvider = function(type, diff_type)
 	return function()
 		local result = nil
-		local bracket = get_formatted_bracket(type)
+		local bracket = icons[type]
 
 		if (diff_type == 'add') then
 			result = vcs.diff_add()
@@ -67,6 +64,7 @@ local DiffBracketProvider = function(type, diff_type)
 		return ''
 	end
 end
+
 
 local function get_basename(file)
 	return file:match '^.+/(.+)$'
@@ -196,16 +194,16 @@ gls.left = {
 				return '  ' .. mode .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
-			separator = get_formatted_bracket('right'),
+			separator = icons.arrow_right_filled,
 			separator_highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
 		FileNameLeftBracket = {
 			provider = function()
-				return get_formatted_bracket('left')
+				return icons.arrow_right_filled
 			end,
-			highlight = { colors.matteBlue, colors.bg },
+			highlight = { colors.bg, colors.matteBlue },
 			condition = condition.buffer_not_empty,
 		}
 	},
@@ -213,9 +211,9 @@ gls.left = {
 		GitRoot = {
 			provider = GetGitRoot,
 			condition = condition.buffer_not_empty,
-			icon = ' ',
+			icon = '   ',
 			highlight = { colors.white, colors.matteBlue },
-			separator = icons.arrows.right .. ' ',
+			separator = icons.arrow_right .. ' ',
 			separator_highlight = { colors.white, colors.matteBlue }
 		},
 	},
@@ -241,24 +239,16 @@ gls.left = {
 			provider = 'FileName',
 			condition = condition.buffer_not_empty,
 			highlight = { colors.white, colors.matteBlue },
+			separator = icons.arrow_right_filled,
+			separator_highlight = { colors.matteBlue, colors.bg }
 		},
 	},
-	{
-		FileNameRightBracket = {
-			provider = function()
-				return get_formatted_bracket('right')
-			end,
-			highlight = { colors.matteBlue, colors.bg },
-			condition = condition.buffer_not_empty,
-		},
-	},
+
 	{
 		DiffAddLeftBracket = {
-			provider = {
-				DiffBracketProvider('left', 'add'),
-			},
+			provider = DiffBracketProvider('arrow_right_filled', 'add'),
 			condition = check_width_and_git,
-			highlight = { colors.green, colors.bg },
+			highlight = { colors.bg, colors.green },
 		}
 	},
 	{
@@ -271,20 +261,16 @@ gls.left = {
 	},
 	{
 		DiffAddRightBracket = {
-			provider = {
-				DiffBracketProvider('right', 'add'),
-			},
+			provider = DiffBracketProvider('arrow_right_filled', 'add'),
 			condition = check_width_and_git,
 			highlight = { colors.green, colors.bg },
 		}
 	},
 	{
 		DiffModifiedLeftBracket = {
-			provider = {
-				DiffBracketProvider('left', 'modified'),
-			},
+			provider = DiffBracketProvider('arrow_right_filled', 'modified'),
 			condition = check_width_and_git,
-			highlight = { colors.orange, colors.bg },
+			highlight = { colors.bg, colors.orange },
 		}
 	},
 	{
@@ -297,20 +283,16 @@ gls.left = {
 	},
 	{
 		DiffModifiedRightBracket = {
-			provider = {
-				DiffBracketProvider('right', 'modified'),
-			},
+			provider = DiffBracketProvider('arrow_right_filled', 'modified'),
 			condition = check_width_and_git,
 			highlight = { colors.orange, colors.bg },
 		}
 	},
 	{
 		DiffRemoveLeftBracket = {
-			provider = {
-				DiffBracketProvider('left', 'remove'),
-			},
+			provider = DiffBracketProvider('arrow_right_filled', 'remove'),
 			condition = check_width_and_git,
-			highlight = { colors.red, colors.bg },
+			highlight = { colors.bg, colors.red },
 		}
 	},
 	{
@@ -323,9 +305,7 @@ gls.left = {
 	},
 	{
 		DiffRemoveRightBracket = {
-			provider = {
-				DiffBracketProvider('right', 'remove'),
-			},
+			provider = DiffBracketProvider('arrow_right_filled', 'remove'),
 			condition = check_width_and_git,
 			highlight = { colors.red, colors.bg },
 		}
@@ -405,7 +385,7 @@ gls.right = {
 		LCBracket = {
 			provider = {
 				function()
-					return get_formatted_bracket('left')
+					return icons.arrow_left_filled
 				end
 			},
 			condition = check_width_and_git,
@@ -430,7 +410,7 @@ gls.right = {
 				function() return ' ' end,
 			},
 			highlight = 'GalaxyViMode',
-			separator = icons.arrows.left .. ' ',
+			separator = icons.arrow_left .. ' ',
 			separator_highlight = 'GalaxyViMode',
 		},
 	},
