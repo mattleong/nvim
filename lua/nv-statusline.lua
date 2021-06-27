@@ -40,9 +40,9 @@ local icons = {
 
 local get_mode = function()
 	local mode_colors = {
-		[110] = { 'NORMAL', colors.purple, },
-		[105] = { 'INSERT', colors.blue, },
-		[99] = { 'COMMAND', colors.orange, },
+		[110] = { 'NORMAL', colors.purple, colors.lightPurple },
+		[105] = { 'INSERT', colors.matteBlue, colors.blue },
+		[99] = { 'COMMAND', colors.pink, colors.salmon},
 		[116] = { 'TERMINAL', colors.blue, },
 		[118] = { 'VISUAL', colors.pink, },
 		[22] = { 'V-BLOCK', colors.pink, },
@@ -104,7 +104,7 @@ end
 local PercentProvider = function()
 	local line_column = fileinfo.current_line_percent()
 	line_column = line_column:gsub("%s+", "")
-	return '≡' .. line_column
+	return '☰' .. line_column
 end
 
 local BracketProvider = function(icon_type, callback)
@@ -133,16 +133,22 @@ gls.left = {
 	{
 		ViMode = {
 			provider = function()
-				local label, mode_color = unpack(get_mode())
+				local label, mode_color, mode_nested = unpack(get_mode())
+
+				if (mode_nested == nil) then
+					mode_nested = colors.lightPurple
+				end
 
 				highlight('GalaxyViMode', mode_color, colors.bg, 'bold')
-				highlight('GalaxyViModeNested', colors.lightPurple, mode_color, 'bold')
+				highlight('GalaxyViModeInv', mode_nested, mode_color, 'bold')
+				highlight('GalaxyViModeNested', mode_nested, colors.bg, 'bold')
+				highlight('GalaxyViModeNestedInv', colors.bg, mode_nested, 'bold')
 
 				return '  ' .. label .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
 			separator = icons.arrow_right_filled,
-			separator_highlight = 'GalaxyViModeNested',
+			separator_highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
@@ -150,35 +156,32 @@ gls.left = {
 			provider = utils.get_git_root,
 			condition = condition.buffer_not_empty,
 			icon = '  ',
-			highlight = { colors.bg, colors.lightPurple },
+			highlight = 'GalaxyViModeNested',
 			separator = icons.arrow_right .. ' ',
-			separator_highlight = { colors.bg, colors.lightPurple }
+			separator_highlight = 'GalaxyViModeNested',
 		},
 	},
 	{
 		FileIcon = {
 			provider = 'FileIcon',
 			condition = condition.buffer_not_empty,
-			highlight = {
-				colors.bg,
-				colors.lightPurple,
-			},
+			highlight = 'GalaxyViModeNested',
 		},
 	},
 	{
 		FilePath = {
 			provider = FilePathShortProvider,
 			condition = condition.buffer_not_empty,
-			highlight = { colors.bg, colors.lightPurple },
+			highlight = 'GalaxyViModeNested',
 		},
 	},
 	{
 		FileName = {
 			provider = 'FileName',
 			condition = condition.buffer_not_empty,
-			highlight = { colors.bg, colors.lightPurple },
-			separator = icons.arrow_right_filled,
-			separator_highlight = { colors.lightPurple, colors.bg }
+			highlight = 'GalaxyViModeNested',
+			separator = icons.rounded_right_filled,
+			separator_highlight = 'GalaxyViModeNestedInv',
 		},
 	},
 	{
@@ -209,7 +212,13 @@ gls.left = {
 			end,
 			condition = condition.check_git_workspace,
 			highlight = { colors.white, colors.bg },
-			separator = icons.arrow_right,
+		}
+	},
+	{
+		DiffAddRightBracket = {
+			provider = BracketProvider('arrow_right', vcs.diff_add),
+			condition = check_width_and_git,
+			highlight = 'GalaxyDiffAdd',
 		}
 	},
 	{
@@ -221,10 +230,10 @@ gls.left = {
 		},
 	},
 	{
-		DiffAddRightBracket = {
-			provider = BracketProvider('arrow_right', vcs.diff_add),
+		DiffModifiedRightBracket = {
+			provider = BracketProvider('arrow_right', vcs.diff_modified),
 			condition = check_width_and_git,
-			highlight = 'GalaxyDiffAdd',
+			highlight = 'GalaxyDiffModified',
 		}
 	},
 	{
@@ -235,12 +244,11 @@ gls.left = {
 			highlight = { colors.orange, colors.bg },
 		},
 	},
-
 	{
-		DiffModifiedRightBracket = {
-			provider = BracketProvider('arrow_right', vcs.diff_modified),
+		DiffRemoveRightBracket = {
+			provider = BracketProvider('arrow_right', vcs.diff_remove),
 			condition = check_width_and_git,
-			highlight = 'GalaxyDiffModified',
+			highlight = 'GalaxyDiffRemove',
 		}
 	},
 	{
@@ -250,13 +258,6 @@ gls.left = {
 			icon = '   ',
 			highlight = { colors.red, colors.bg },
 		},
-	},
-	{
-		DiffRemoveRightBracket = {
-			provider = BracketProvider('arrow_right', vcs.diff_remove),
-			condition = check_width_and_git,
-			highlight = 'GalaxyDiffRemove',
-		}
 	},
 }
 
@@ -271,6 +272,7 @@ gls.right = {
 		DiagnosticInfo = {
 			provider = function()
 				highlight('NVDiagnosticInfo', colors.blue, colors.bg, 'bold')
+				highlight('NVDiagnosticInfoInv', colors.bg, colors.blue,  'bold')
 				local result = diag.get_diagnostic_info()
 				if (result ~= nil) then
 					return result
@@ -304,6 +306,7 @@ gls.right = {
 		DiagnosticWarn = {
 			provider = function()
 				highlight('NVDiagnosticWarn', colors.orange, colors.bg, 'bold')
+				highlight('NVDiagnosticWarnInv', colors.bg, colors.orange, 'bold')
 				local result = diag.get_diagnostic_warn()
 				if (result ~= nil) then
 					return result
@@ -338,6 +341,7 @@ gls.right = {
 		DiagnosticError = {
 			provider = function()
 				highlight('NVDiagnosticError', colors.red, colors.bg, 'bold')
+				highlight('NVDiagnosticErrorInv', colors.bg, colors.red, 'bold')
 				local result = diag.get_diagnostic_error()
 				if (result ~= nil) then
 					return result
@@ -354,6 +358,22 @@ gls.right = {
 		DiagnosticErrorRightBracket = {
 			provider = BracketProvider('rounded_right_filled', diag.get_diagnostic_error),
 			highlight = 'NVDiagnosticErrorInv',
+		}
+	},
+	{
+		FileSizeRightBracket = {
+			provider = function()
+				return icons.rounded_left_filled
+			end,
+			condition = condition.hide_in_width,
+			highlight = 'GalaxyViModeNestedInv',
+		}
+	},
+	{
+		FileSize = {
+			provider = 'FileSize',
+			highlight = 'GalaxyViModeNested',
+			icon = '📄',
 		}
 	},
 	{
@@ -382,6 +402,21 @@ gls.right = {
 
 gls.short_line_left = {
 	{
+		FileNameShort = {
+			provider = 'FileName',
+			condition = condition.buffer_not_empty,
+			highlight = { colors.white, colors.bg },
+		},
+	},
+	{
+		GitRootShort = {
+			provider = utils.get_git_root,
+			condition = condition.buffer_not_empty,
+			icon = ' ',
+			highlight = { colors.white, colors.bg },
+		},
+	},
+	{
 		FileIconShort = {
 			provider = {
 				function() return '  ' end,
@@ -400,21 +435,6 @@ gls.short_line_left = {
 			condition = function()
 				return is_file() and check_width_and_git()
 			end,
-			highlight = { colors.white, colors.bg },
-		},
-	},
-	{
-		FileNameShort = {
-			provider = 'FileName',
-			condition = condition.buffer_not_empty,
-			highlight = { colors.white, colors.bg },
-		},
-	},
-	{
-		GitRootShort = {
-			provider = utils.get_git_root,
-			condition = condition.buffer_not_empty,
-			icon = ' ',
 			highlight = { colors.white, colors.bg },
 		},
 	},
