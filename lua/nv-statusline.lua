@@ -34,8 +34,10 @@ local icons = {
 	arrow_right_filled = '', -- e0b0
 	arrow_left = '', -- e0b3
 	arrow_right = '', -- e0b1
-	ghost = '👻',
+	ghost = '',
 	warn = '',
+	info = '',
+	error = '',
 }
 
 local get_mode = function()
@@ -125,9 +127,23 @@ gls.left = {
 	{
 		Ghost = {
 			provider = {
-				function() return '  ' .. icons.ghost end,
+				function()
+					local label, mode_color, mode_nested = unpack(get_mode())
+					highlight('GalaxyGhost', colors.bg, mode_color, 'bold')
+					return '  ' .. icons.ghost .. ' '
+				end,
 			},
-			highlight = 'GalaxyViMode',
+			highlight = 'GalaxyGhost',
+		},
+	},
+	{
+		ViModeLeftBracket = {
+			provider = function()
+				local label, mode_color, mode_nested = unpack(get_mode())
+				highlight('GalaxyViModeBracket', colors.bg, mode_color, 'bold')
+				return icons.rounded_left_filled
+			end,
+			highlight = 'GalaxyViModeBracket',
 		},
 	},
 	{
@@ -180,7 +196,7 @@ gls.left = {
 			provider = 'FileName',
 			condition = condition.buffer_not_empty,
 			highlight = 'GalaxyViModeNested',
-			separator = icons.rounded_right_filled,
+			separator = icons.arrow_right_filled,
 			separator_highlight = 'GalaxyViModeNestedInv',
 		},
 	},
@@ -280,7 +296,7 @@ gls.right = {
 
 				return ''
 			end,
-			icon = '  ',
+			icon = icons.info .. ' ',
 			highlight = 'NVDiagnosticInfo',
 			condition = check_width_and_git,
 		}
@@ -315,7 +331,7 @@ gls.right = {
 				return ''
 			end,
 			highlight = 'NVDiagnosticWarn',
-			icon = ' ' .. icons.warn .. ' ',
+			icon = icons.warn .. ' ',
 			condition = check_width_and_git,
 			highlight = 'NVDiagnosticWarn',
 		}
@@ -349,7 +365,7 @@ gls.right = {
 
 				return ''
 			end,
-			icon = '  ',
+			icon = icons.error .. ' ',
 			highlight = 'NVDiagnosticError',
 			condition = check_width_and_git,
 		}
@@ -363,7 +379,7 @@ gls.right = {
 	{
 		FileSizeRightBracket = {
 			provider = function()
-				return icons.rounded_left_filled
+				return icons.arrow_left_filled
 			end,
 			condition = condition.hide_in_width,
 			highlight = 'GalaxyViModeNestedInv',
@@ -396,6 +412,15 @@ gls.right = {
 			highlight = 'GalaxyViMode',
 			separator = icons.arrow_left .. ' ',
 			separator_highlight = 'GalaxyViMode',
+		},
+	},
+	{
+		PercentRightBracket = {
+			provider = function()
+				local label, mode_color, mode_nested = unpack(get_mode())
+				return icons.rounded_right_filled
+			end,
+			highlight = 'GalaxyViModeBracket',
 		},
 	},
 }
