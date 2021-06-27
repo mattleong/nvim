@@ -4,12 +4,6 @@ local vcs = require('galaxyline.provider_vcs')
 local condition = require 'galaxyline.condition'
 local fileinfo = require('galaxyline.provider_fileinfo')
 
-local sep = {
-  right_filled = '', -- e0b2
-  left_filled = '', -- e0b0
-  right = '', -- e0b3
-  left = '', -- e0b1
-}
 local colors = {
 	brown = '#a9323d',
 	aqua = '#5b9c9c',
@@ -154,9 +148,9 @@ local PercentProvider = function()
 	return '≡' .. line_column
 end
 
-local mode_hightlight = function(bg, fg)
-	vim.api.nvim_command(string.format('hi GalaxyViMode guibg=%s guifg=%s gui=bold', bg, fg))
-	vim.api.nvim_command(string.format('hi GalaxyViModeInv guibg=%s guifg=%s gui=bold', fg, bg))
+local highlight = function(group, bg, fg, gui)
+	vim.api.nvim_command(string.format('hi %s guibg=%s guifg=%s gui=%s', group, bg, fg, gui))
+	vim.api.nvim_command(string.format('hi %sInv guibg=%s guifg=%s gui=%s', group, fg, bg, gui))
 end
 
 galaxy.short_line_list = { 'coc-explorer', 'packer' }
@@ -186,7 +180,8 @@ gls.left = {
 					[83] = 'S-LINE',
 				}
 
-				mode_hightlight(mode_color(), colors.bg)
+				highlight('GalaxyViMode', mode_color(), colors.bg, 'bold')
+				highlight('GalaxyViModeInv', colors.bg, mode_color(), 'bold')
 				local alias = aliases[vim.fn.mode():byte()]
 				local mode
 				if alias ~= nil then
@@ -414,7 +409,7 @@ gls.right = {
 				end
 			},
 			condition = check_width_and_git,
-			highlight = { colors.lightPurple, colors.bg },
+			highlight = 'GalaxyViModeInv',
 		}
 	},
 	{
@@ -423,9 +418,9 @@ gls.right = {
 				LineColumnProvider,
 				function() return ' ' end,
 			},
-			highlight = { colors.bg, colors.lightPurple },
+			highlight = 'GalaxyViMode',
 			separator = ' ',
-			separator_highlight = { colors.lightPurple, colors.lightPurple },
+			separator_highlight = 'GalaxyViMode',
 		}
 	},
 	{
@@ -434,9 +429,9 @@ gls.right = {
 				PercentProvider,
 				function() return ' ' end,
 			},
-			highlight = { colors.bg, colors.lightPurple },
+			highlight = 'GalaxyViMode',
 			separator = icons.arrows.left .. ' ',
-			separator_highlight = { colors.bg, colors.lightPurple },
+			separator_highlight = 'GalaxyViMode',
 		},
 	},
 }
