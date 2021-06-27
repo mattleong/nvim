@@ -81,6 +81,14 @@ packer.startup(
 		-- autocomplete/ide
 		use {'neoclide/coc.nvim', branch = 'release'}
 
+		-- colorized hex codes
+		use {
+			'norcalli/nvim-colorizer.lua',
+			config = function()
+				require'colorizer'.setup()
+			end
+		}
+
 	end
 )
 
