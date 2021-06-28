@@ -9,14 +9,11 @@ local utils = require('nv-utils');
 local colors = {
 	brown = '#a9323d',
 	aqua = '#5b9c9c',
-	blue = '#5d8fac',
 	darkBlue = '#557486',
 	purple = '#5e3e5e',
 	lightPurple = '#959acb',
-	red = '#c2616b',
 	beige = '#686765',
 	yellow = '#a8a384',
-	orange = '#c59f96',
 	darkOrange = '#79564f',
 	pink = '#9e619e',
 	salmon = '#ab57ab',
@@ -26,6 +23,9 @@ local colors = {
 	bg = '#111219',
 	bluee = '#545c8c',
 	matteBlue = '#494f8b',
+	info = '#5d8fac',
+	error = '#c2616b',
+	warn = '#c59f96',
 }
 
 local icons = {
@@ -46,13 +46,13 @@ local get_mode = function()
 		[110] = { 'NORMAL', colors.matteBlue, colors.lightPurple },
 		[105] = { 'INSERT', colors.purple, colors.pink },
 		[99] = { 'COMMAND', colors.beige, colors.yellow },
-		[116] = { 'TERMINAL', colors.aqua, colors.blue },
-		[118] = { 'VISUAL', colors.purple, colors.blue, },
-		[22] = { 'V-BLOCK', colors.purple, colors.blue, },
-		[86] = { 'V-LINE', colors.purple, colors.blue, },
-		[82] = { 'REPLACE', colors.brown, colors.red, },
-		[115] = { 'SELECT', colors.brown, colors.red, },
-		[83] = { 'S-LINE', colors.brown, colors.red, },
+		[116] = { 'TERMINAL', colors.aqua, colors.info },
+		[118] = { 'VISUAL', colors.purple, colors.info, },
+		[22] = { 'V-BLOCK', colors.purple, colors.info, },
+		[86] = { 'V-LINE', colors.purple, colors.info, },
+		[82] = { 'REPLACE', colors.brown, colors.error, },
+		[115] = { 'SELECT', colors.brown, colors.error, },
+		[83] = { 'S-LINE', colors.brown, colors.error, },
 	}
 
 	local mode_data = mode_colors[vim.fn.mode():byte()]
@@ -221,7 +221,7 @@ gls.left = {
 			provider = 'DiffModified',
 			condition = check_width_and_git,
 			icon = '  ',
-			highlight = { colors.orange, colors.bg },
+			highlight = { colors.warn, colors.bg },
 		},
 	},
 	{
@@ -229,7 +229,7 @@ gls.left = {
 			provider = 'DiffRemove',
 			condition = check_width_and_git,
 			icon = '  ',
-			highlight = { colors.red, colors.bg },
+			highlight = { colors.error, colors.bg },
 		},
 	},
 }
@@ -248,8 +248,8 @@ gls.right = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
 				local error_result = diag.get_diagnostic_error()
-				highlight('DiagnosticError', colors.red, colors.bg, 'bold')
-				highlight('DiagnosticErrorInv', colors.bg, colors.red, 'bold')
+				highlight('DiagnosticError', colors.error, colors.bg, 'bold')
+				highlight('DiagnosticErrorInv', colors.bg, colors.error, 'bold')
 
 				if (error_result ~= '' and error_result ~= nil) then
 					return error_result
@@ -278,10 +278,9 @@ gls.right = {
 	{
 		DiagnosticWarn = {
 			provider = function()
-				local label, mode_color, mode_nested = unpack(get_mode())
 				local warn_result = diag.get_diagnostic_warn()
-				highlight('DiagnosticWarn', colors.orange, colors.bg, 'bold')
-				highlight('DiagnosticWarnInv', colors.bg, colors.orange, 'bold')
+				highlight('DiagnosticWarn', colors.warn, colors.bg, 'bold')
+				highlight('DiagnosticWarnInv', colors.bg, colors.warn, 'bold')
 
 				if (warn_result ~= '' and warn_result ~= nil) then
 					return warn_result
@@ -310,10 +309,9 @@ gls.right = {
 	{
 		DiagnosticInfo = {
 			provider = function()
-				local label, mode_color, mode_nested = unpack(get_mode())
 				local info_result = diag.get_diagnostic_info()
-				highlight('DiagnosticInfo', colors.blue, colors.bg, 'bold')
-				highlight('DiagnosticInfoInv', colors.bg, colors.blue, 'bold')
+				highlight('DiagnosticInfo', colors.info, colors.bg, 'bold')
+				highlight('DiagnosticInfoInv', colors.bg, colors.info, 'bold')
 
 				if (info_result ~= '' and info_result ~= nil) then
 					return info_result
@@ -358,9 +356,9 @@ gls.right = {
 					return ''
 				end
 				if (string.len(branch_name) > 28) then
-					return string.sub(branch_name, 1, 25).."..."
+					return string.sub(branch_name, 1, 25)..'...'
 				end
-				return branch_name .. " "
+				return branch_name .. ' '
 			end,
 			condition = condition.check_git_workspace,
 			highlight = 'GalaxyViModeNested',
