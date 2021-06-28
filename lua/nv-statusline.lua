@@ -108,9 +108,14 @@ end
 local BracketProvider = function(icon_type, callback)
 	return function()
 		local result = callback()
+		local icon = icons[icon_type]
+
+		if (icon == nil) then
+			icon = icon_type
+		end
 
 		if (result ~= nil and result ~= '') then
-			return icons[icon_type]
+			return icon
 		end
 
 		return ''
@@ -134,7 +139,6 @@ gls.left = {
 				function()
 					local label, mode_color, mode_nested = unpack(get_mode())
 					highlight('GalaxyGhost', mode_nested, mode_color, 'bold')
-					highlight('GalaxyGhostBracket', mode_color, colors.bg, 'bold')
 					return icons.ghost .. ' '
 				end,
 			},
@@ -205,36 +209,6 @@ gls.left = {
 		},
 	},
 	{
-		Whitespace = {
-			provider = function() return ' ' end,
-			highlight = { colors.bg, colors.bg },
-		}
-	},
-	{
-		GitIcon = {
-			provider = function() return '  ' end,
-			condition = condition.check_git_workspace,
-			highlight = { colors.pink, colors.bg },
-		}
-	},
-	{
-		GitBranch = {
-			provider = function()
-				local vcs = require('galaxyline.provider_vcs')
-				local branch_name = vcs.get_git_branch()
-				if (not branch_name) then
-					return ''
-				end
-				if (string.len(branch_name) > 28) then
-					return string.sub(branch_name, 1, 25).."..."
-				end
-				return branch_name .. " "
-			end,
-			condition = condition.check_git_workspace,
-			highlight = { colors.white, colors.bg },
-		}
-	},
-	{
 		DiffAdd = {
 			provider = 'DiffAdd',
 			icon = '  ',
@@ -264,27 +238,86 @@ gls.left = {
 
 gls.right = {
 	{
+		DiagnosticErrorLeftBracket = {
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_error),
+			highlight = 'DiagnosticErrorInv',
+		}
+	},
+	{
+		DiagnosticError = {
+			provider = function()
+				local label, mode_color, mode_nested = unpack(get_mode())
+				local error_result = diag.get_diagnostic_error()
+				highlight('DiagnosticError', colors.red, colors.bg, 'bold')
+				highlight('DiagnosticErrorInv', colors.bg, colors.red, 'bold')
+
+				if (error_result ~= '' and error_result ~= nil) then
+					return error_result
+				end
+			end,
+			icon = icons.error .. ' ',
+			highlight = 'DiagnosticError',
+			condition = check_width_and_git,
+		}
+	},
+	{
+		DiagnosticErrorRightBracket = {
+			provider = {
+				BracketProvider('rounded_right_filled', diag.get_diagnostic_error),
+				BracketProvider(' ', diag.get_diagnostic_error),
+			},
+			highlight = 'DiagnosticErrorInv',
+		}
+	},
+	{
+		DiagnosticWarnLeftBracket = {
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_warn),
+			highlight = 'DiagnosticWarnInv',
+		}
+	},
+	{
+		DiagnosticWarn = {
+			provider = function()
+				local label, mode_color, mode_nested = unpack(get_mode())
+				local warn_result = diag.get_diagnostic_warn()
+				highlight('DiagnosticWarn', colors.orange, colors.bg, 'bold')
+				highlight('DiagnosticWarnInv', colors.bg, colors.orange, 'bold')
+
+				if (warn_result ~= '' and warn_result ~= nil) then
+					return warn_result
+				end
+			end,
+			highlight = 'DiagnosticWarn',
+			icon = icons.warn .. ' ',
+			condition = check_width_and_git,
+		}
+	},
+	{
+		DiagnosticWarnRightBracket = {
+			provider = {
+				BracketProvider('rounded_right_filled', diag.get_diagnostic_warn),
+				BracketProvider(' ', diag.get_diagnostic_warn),
+			},
+			highlight = 'DiagnosticWarnInv',
+		}
+	},
+	{
 		DiagnosticInfoLeftBracket = {
 			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_info),
-			highlight = 'DiagnosticInfoLeftBracket',
+			highlight = 'DiagnosticInfoInv',
 		}
 	},
 	{
 		DiagnosticInfo = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
-				local warn_result = diag.get_diagnostic_warn()
-				local error_result = diag.get_diagnostic_error()
 				local info_result = diag.get_diagnostic_info()
-
 				highlight('DiagnosticInfo', colors.blue, colors.bg, 'bold')
-				highlight('DiagnosticInfoLeftBracket', colors.bg, colors.blue, 'bold')
-				highlight('DiagnosticInfoRightBracket', colors.blue, mode_nested, 'bold')
+				highlight('DiagnosticInfoInv', colors.bg, colors.blue, 'bold')
 
-				if (info_result == '' or info_result == nil) then
+				if (info_result ~= '' and info_result ~= nil) then
 					return info_result
 				end
-				return info_result .. ' '
 			end,
 			icon = icons.info .. ' ',
 			highlight = 'DiagnosticInfo',
@@ -293,95 +326,16 @@ gls.right = {
 	},
 	{
 		DiagnosticInfoRightBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_info),
-			highlight = 'DiagnosticInfoRightBracket',
+			provider = {
+				BracketProvider('rounded_right_filled', diag.get_diagnostic_info),
+				BracketProvider(' ', diag.get_diagnostic_info),
+			},
+			highlight = 'DiagnosticInfoInv',
 		}
 	},
 	{
-		DiagnosticWarnLeftBracket = {
-			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_warn),
-			highlight = 'DiagnosticWarnLeftBracket',
-		}
-	},
-	{
-		DiagnosticWarn = {
+		GitBranchRightBracket = {
 			provider = function()
-				local label, mode_color, mode_nested = unpack(get_mode())
-				local warn_result = diag.get_diagnostic_warn()
-				local error_result = diag.get_diagnostic_error()
-				local info_result = diag.get_diagnostic_info()
-				highlight('DiagnosticWarn', colors.orange, colors.bg, 'bold')
-				highlight('DiagnosticWarnLeftBracket', colors.bg, colors.orange, 'bold')
-				highlight('DiagnosticWarnRightBracket', colors.orange, mode_nested, 'bold')
-
-				if (warn_result == '' or warn_result == nil) then
-					return warn_result
-				end
-				return warn_result .. ' '
-			end,
-			highlight = 'DiagnosticWarn',
-			icon = '  ' .. icons.warn .. ' ',
-			condition = check_width_and_git,
-		}
-	},
-	{
-		DiagnosticWarnRightBracket = {
-			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_warn),
-			highlight = 'DiagnosticWarnRightBracket',
-		}
-	},
-	{
-		DiagnosticErrorRightBracket = {
-			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_error),
-			highlight = 'DiagnosticErrorRightBracket',
-		}
-	},
-	{
-		DiagnosticError = {
-			provider = function()
-				local error_result = diag.get_diagnostic_error()
-				local warn_result = diag.get_diagnostic_warn()
-				local info_result = diag.get_diagnostic_info()
-				local label, mode_color, mode_nested = unpack(get_mode())
-				highlight('NVDiagnosticError', colors.red, colors.bg, 'bold')
-				highlight('DiagnosticErrorRightBracket', colors.red, mode_nested, 'bold')
-				highlight('DiagnosticErrorLeftBracket', colors.red, colors.bg, 'bold')
-
-				if (error_result ~= '' and error_result ~= nil) then
-					highlight('DiagnosticWarnRightBracket', colors.orange, colors.red, 'bold')
-				end
-
-				return error_result
-			end,
-			icon = icons.error .. ' ',
-			highlight = 'NVDiagnosticError',
-			condition = check_width_and_git,
-		}
-	},
-	{
-		DiagnosticErrorLeftBracket = {
-			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_error),
-			highlight = 'DiagnosticErrorLeftBracket',
-		}
-	},
-	{
-		FileSizeRightBracket = {
-			provider = function()
-				local diagnostics = {
-					diag.get_diagnostic_error(),
-					diag.get_diagnostic_warn(),
-					diag.get_diagnostic_info(),
-				}
-				local has_diagnostic = false
-				for k, result in pairs(diagnostics) do
-					if (result == '' or result == nil) then
-						has_diagnostic = true
-					end
-				end
-
-				if (has_diagnostic) then
-					return ''
-				end
 				return icons.arrow_left_filled
 			end,
 			condition = condition.hide_in_width,
@@ -389,10 +343,27 @@ gls.right = {
 		}
 	},
 	{
-		FileSize = {
-			provider = 'FileSize',
+		GitIcon = {
+			provider = function() return '  ' end,
+			condition = condition.check_git_workspace,
 			highlight = 'GalaxyViModeNested',
-			icon = '📄',
+		}
+	},
+	{
+		GitBranch = {
+			provider = function()
+				local vcs = require('galaxyline.provider_vcs')
+				local branch_name = vcs.get_git_branch()
+				if (not branch_name) then
+					return ''
+				end
+				if (string.len(branch_name) > 28) then
+					return string.sub(branch_name, 1, 25).."..."
+				end
+				return branch_name .. " "
+			end,
+			condition = condition.check_git_workspace,
+			highlight = 'GalaxyViModeNested',
 		}
 	},
 	{
