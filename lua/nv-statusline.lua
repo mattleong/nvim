@@ -25,7 +25,7 @@ local colors = {
 	white = '#9ea3c0',
 	bg = '#111219',
 	bluee = '#545c8c',
-	matteBlue = '#5d6ad8',
+	matteBlue = '#494f8b',
 }
 
 local icons = {
@@ -43,13 +43,13 @@ local icons = {
 
 local get_mode = function()
 	local mode_colors = {
-		[110] = { 'NORMAL', colors.bluee, colors.lightPurple },
+		[110] = { 'NORMAL', colors.matteBlue, colors.lightPurple },
 		[105] = { 'INSERT', colors.purple, colors.pink },
 		[99] = { 'COMMAND', colors.beige, colors.yellow },
 		[116] = { 'TERMINAL', colors.aqua, colors.blue },
-		[118] = { 'VISUAL', colors.pink, colors.blue, },
-		[22] = { 'V-BLOCK', colors.pink, colors.blue, },
-		[86] = { 'V-LINE', colors.pink, colors.blue, },
+		[118] = { 'VISUAL', colors.purple, colors.blue, },
+		[22] = { 'V-BLOCK', colors.purple, colors.blue, },
+		[86] = { 'V-LINE', colors.purple, colors.blue, },
 		[82] = { 'REPLACE', colors.brown, colors.red, },
 		[115] = { 'SELECT', colors.brown, colors.red, },
 		[83] = { 'S-LINE', colors.brown, colors.red, },
@@ -205,7 +205,7 @@ gls.left = {
 			provider = 'FileName',
 			condition = condition.buffer_not_empty,
 			highlight = 'GalaxyViModeNested',
-			separator = icons.arrow_right_filled,
+			separator = icons.rounded_right_filled,
 			separator_highlight = 'GalaxyViModeNestedInv',
 		},
 	},
@@ -240,51 +240,32 @@ gls.left = {
 		}
 	},
 	{
-		DiffAddRightBracket = {
-			provider = BracketProvider('arrow_right', vcs.diff_add),
-			condition = check_width_and_git,
-			highlight = 'GalaxyDiffAdd',
-		}
-	},
-	{
 		DiffAdd = {
 			provider = 'DiffAdd',
-			icon = '   ',
+			icon = '  ',
 			condition = check_width_and_git,
 			highlight = { colors.green, colors.bg },
 		},
 	},
 	{
-		DiffModifiedRightBracket = {
-			provider = BracketProvider('arrow_right', vcs.diff_modified),
-			condition = check_width_and_git,
-			highlight = 'GalaxyDiffModified',
-		}
-	},
-	{
 		DiffModified = {
 			provider = 'DiffModified',
 			condition = check_width_and_git,
-			icon = '   ',
+			icon = '  ',
 			highlight = { colors.orange, colors.bg },
 		},
-	},
-	{
-		DiffRemoveRightBracket = {
-			provider = BracketProvider('arrow_right', vcs.diff_remove),
-			condition = check_width_and_git,
-			highlight = 'GalaxyDiffRemove',
-		}
 	},
 	{
 		DiffRemove = {
 			provider = 'DiffRemove',
 			condition = check_width_and_git,
-			icon = '   ',
+			icon = '  ',
 			highlight = { colors.red, colors.bg },
 		},
 	},
 }
+-- order ltr
+-- info, warn error
 
 gls.right = {
 	{
@@ -298,12 +279,7 @@ gls.right = {
 			provider = function()
 				highlight('NVDiagnosticInfo', colors.blue, colors.bg, 'bold')
 				highlight('NVDiagnosticInfoInv', colors.bg, colors.blue,  'bold')
-				local result = diag.get_diagnostic_info()
-				if (result ~= nil) then
-					return result
-				end
-
-				return ''
+				return diag.get_diagnostic_info()
 			end,
 			icon = icons.info .. ' ',
 			highlight = 'NVDiagnosticInfo',
@@ -312,13 +288,8 @@ gls.right = {
 	},
 	{
 		DiagnosticInfoRightBracket = {
-			provider = BracketProvider('rounded_right_filled', diag.get_diagnostic_info),
-			highlight = 'NVDiagnosticInfoInv',
-		}
-	},
-	{
-		Whitespace = {
-			provider = function() return ' ' end,
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_info),
+			highlight = 'NVDiagnosticInfo',
 		}
 	},
 	{
@@ -332,28 +303,17 @@ gls.right = {
 			provider = function()
 				highlight('NVDiagnosticWarn', colors.orange, colors.bg, 'bold')
 				highlight('NVDiagnosticWarnInv', colors.bg, colors.orange, 'bold')
-				local result = diag.get_diagnostic_warn()
-				if (result ~= nil) then
-					return result
-				end
-
-				return ''
+				return diag.get_diagnostic_warn()
 			end,
 			highlight = 'NVDiagnosticWarn',
 			icon = icons.warn .. ' ',
 			condition = check_width_and_git,
-			highlight = 'NVDiagnosticWarn',
 		}
 	},
 	{
 		DiagnosticWarnRightBracket = {
-			provider = BracketProvider('rounded_right_filled', diag.get_diagnostic_warn),
-			highlight = 'NVDiagnosticWarnInv',
-		}
-	},
-	{
-		Whitespace = {
-			provider = function() return ' ' end,
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_warn),
+			highlight = 'NVDiagnosticWarn',
 		}
 	},
 	{
@@ -367,12 +327,7 @@ gls.right = {
 			provider = function()
 				highlight('NVDiagnosticError', colors.red, colors.bg, 'bold')
 				highlight('NVDiagnosticErrorInv', colors.bg, colors.red, 'bold')
-				local result = diag.get_diagnostic_error()
-				if (result ~= nil) then
-					return result
-				end
-
-				return ''
+				return diag.get_diagnostic_error()
 			end,
 			icon = icons.error .. ' ',
 			highlight = 'NVDiagnosticError',
@@ -381,14 +336,14 @@ gls.right = {
 	},
 	{
 		DiagnosticErrorRightBracket = {
-			provider = BracketProvider('rounded_right_filled', diag.get_diagnostic_error),
-			highlight = 'NVDiagnosticErrorInv',
+			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_error),
+			highlight = 'NVDiagnosticError',
 		}
 	},
 	{
 		FileSizeRightBracket = {
 			provider = function()
-				return icons.arrow_left_filled
+				return icons.rounded_left_filled
 			end,
 			condition = condition.hide_in_width,
 			highlight = 'GalaxyViModeNestedInv',
