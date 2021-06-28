@@ -205,7 +205,7 @@ gls.left = {
 			provider = 'FileName',
 			condition = condition.buffer_not_empty,
 			highlight = 'GalaxyViModeNested',
-			separator = icons.rounded_right_filled,
+			separator = icons.arrow_right_filled,
 			separator_highlight = 'GalaxyViModeNestedInv',
 		},
 	},
@@ -294,26 +294,35 @@ gls.right = {
 	},
 	{
 		DiagnosticWarnLeftBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_warn),
+			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_warn),
 			highlight = 'NVDiagnosticWarnInv',
 		}
 	},
 	{
 		DiagnosticWarn = {
 			provider = function()
+				local label, mode_color, mode_nested = unpack(get_mode())
+				local result = diag.get_diagnostic_warn()
 				highlight('NVDiagnosticWarn', colors.orange, colors.bg, 'bold')
 				highlight('NVDiagnosticWarnInv', colors.bg, colors.orange, 'bold')
-				return diag.get_diagnostic_warn()
+
+				highlight('DiagnosticWarnRightBracket', colors.orange, mode_nested, 'bold')
+
+				if (result == '' or result == nil) then
+					return result
+				end
+
+				return result .. ' '
 			end,
 			highlight = 'NVDiagnosticWarn',
-			icon = icons.warn .. ' ',
+			icon = '  ' .. icons.warn .. ' ',
 			condition = check_width_and_git,
 		}
 	},
 	{
 		DiagnosticWarnRightBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_warn),
-			highlight = 'NVDiagnosticWarn',
+			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_warn),
+			highlight = 'DiagnosticWarnRightBracket',
 		}
 	},
 	{
@@ -343,7 +352,22 @@ gls.right = {
 	{
 		FileSizeRightBracket = {
 			provider = function()
-				return icons.rounded_left_filled
+				local diagnostics = {
+					diag.get_diagnostic_error(),
+					diag.get_diagnostic_warn(),
+					diag.get_diagnostic_info(),
+				}
+				local has_diagnostic = false
+				for k, result in pairs(diagnostics) do
+					if (result == '' or result == nil) then
+						has_diagnostic = true
+					end
+				end
+
+				if (has_diagnostic) then
+					return ''
+				end
+				return icons.arrow_left_filled
 			end,
 			condition = condition.hide_in_width,
 			highlight = 'GalaxyViModeNestedInv',
