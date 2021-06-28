@@ -9,20 +9,15 @@ local utils = require('nv-utils');
 local colors = {
 	brown = '#a9323d',
 	aqua = '#5b9c9c',
-	darkBlue = '#557486',
-	purple = '#5e3e5e',
-	lightPurple = '#959acb',
 	beige = '#686765',
 	yellow = '#a8a384',
-	darkOrange = '#79564f',
 	pink = '#9e619e',
-	salmon = '#ab57ab',
 	green = '#63976f',
-	lightGreen = '#5aa46c',
 	white = '#9ea3c0',
 	bg = '#111219',
-	bluee = '#545c8c',
-	matteBlue = '#494f8b',
+	blue = '#494f8b',
+	lightBlue = '#959acb',
+	purple = '#5e3e5e',
 	info = '#5d8fac',
 	error = '#c2616b',
 	warn = '#c59f96',
@@ -39,11 +34,12 @@ local icons = {
 	warn = '',
 	info = '',
 	error = '',
+	branch = '',
 }
 
 local get_mode = function()
 	local mode_colors = {
-		[110] = { 'NORMAL', colors.matteBlue, colors.lightPurple },
+		[110] = { 'NORMAL', colors.blue, colors.lightBlue },
 		[105] = { 'INSERT', colors.purple, colors.pink },
 		[99] = { 'COMMAND', colors.beige, colors.yellow },
 		[116] = { 'TERMINAL', colors.aqua, colors.info },
@@ -136,17 +132,13 @@ gls.left = {
 	},
 	{
 		Ghost = {
-			provider = {
-				function()
-					return icons.ghost .. ' '
-				end,
-			},
+			provider = BracketProvider(icons.ghost, true),
 			highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
 		ViModeLeftBracket = {
-			provider = BracketProvider(icons.arrow_right_filled, true),
+			provider = BracketProvider(icons.rounded_right_filled, true),
 		},
 	},
 	{
@@ -175,7 +167,7 @@ gls.left = {
 	},
 	{
 		GitIcon = {
-			provider = function() return '   ' end,
+			provider = BracketProvider('  ' .. icons.branch .. ' ', true),
 			condition = check_width_and_git,
 			highlight = 'GalaxyViModeNested',
 		}
@@ -196,7 +188,7 @@ gls.left = {
 			condition = check_width_and_git,
 			highlight = 'GalaxyViModeNested',
 			separator = icons.arrow_right .. ' ',
-			separator_highlight = 'GalaxyViModeNested',
+			separator_highlight = 'GalaxyViModeInv',
 		}
 	},
 	{
@@ -378,11 +370,10 @@ gls.right = {
 		PerCent = {
 			provider = {
 				PercentProvider,
-				function() return ' ' end,
 			},
 			highlight = 'GalaxyViMode',
 			separator = icons.arrow_left .. ' ',
-			separator_highlight = 'GalaxyViMode',
+			separator_highlight = 'GalaxyViModeLeftBracket',
 		},
 	},
 	{
