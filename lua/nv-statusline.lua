@@ -139,6 +139,7 @@ gls.left = {
 	{
 		ViModeLeftBracket = {
 			provider = BracketProvider(icons.rounded_right_filled, true),
+			highlight = 'GalaxyViMode',
 		},
 	},
 	{
@@ -146,15 +147,11 @@ gls.left = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
 
-				highlight('GalaxyViMode', mode_color, colors.bg)
+				highlight('GalaxyViMode', mode_color, mode_nested)
 				highlight('GalaxyViModeInv', mode_nested, mode_color)
 				highlight('GalaxyViModeNested', mode_nested, colors.bg)
 				highlight('GalaxyViModeNestedInv', colors.bg, mode_nested)
-
 				highlight('GalaxyBracket', colors.bg, mode_color)
-
-				highlight('GalaxyViModeRightBracket', mode_nested, mode_color)
-				highlight('GalaxyViModeLeftBracket', mode_color, mode_nested)
 
 				return '  ' .. label .. ' '
 			end,
@@ -163,13 +160,14 @@ gls.left = {
 	{
 		ViModeRightBracket = {
 			provider = BracketProvider(icons.arrow_right_filled, true),
+			highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
 		GitIcon = {
 			provider = BracketProvider('  ' .. icons.branch .. ' ', true),
 			condition = check_width_and_git,
-			highlight = 'GalaxyViModeNested',
+			highlight = 'GalaxyViModeInv',
 		}
 	},
 	{
@@ -186,7 +184,7 @@ gls.left = {
 				return branch_name .. ' '
 			end,
 			condition = check_width_and_git,
-			highlight = 'GalaxyViModeNested',
+			highlight = 'GalaxyViModeInv',
 			separator = icons.arrow_right .. ' ',
 			separator_highlight = 'GalaxyViModeInv',
 		}
@@ -195,21 +193,21 @@ gls.left = {
 		FileIcon = {
 			provider = 'FileIcon',
 			condition = check_width_and_git,
-			highlight = 'GalaxyViModeNested',
+			highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
 		FilePath = {
 			provider = FilePathShortProvider,
 			condition = check_width_and_git,
-			highlight = 'GalaxyViModeNested',
+			highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
 		FileName = {
 			provider = 'FileName',
 			condition = check_width_and_git,
-			highlight = 'GalaxyViModeNested',
+			highlight = 'GalaxyViModeInv',
 			separator = icons.arrow_right_filled,
 			separator_highlight = 'GalaxyViModeNestedInv',
 		},
@@ -352,7 +350,7 @@ gls.right = {
 			provider = utils.get_git_root,
 			condition = condition.buffer_not_empty,
 			icon = '   ',
-			highlight = 'GalaxyViModeNested',
+			highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
