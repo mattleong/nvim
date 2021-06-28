@@ -326,6 +326,19 @@ gls.right = {
 		}
 	},
 	{
+		DiagnosticErrorRightBracket = {
+			provider = function()
+				local result = diag.get_diagnostic_warn()
+				local label, mode_color, mode_nested = unpack(get_mode())
+				if (result == '' or result == nil) then
+					highlight('DiagnosticErrorRightBracket', colors.bg, colors.red, 'bold')
+					return BracketProvider('arrow_left_filled', diag.get_diagnostic_error)()
+				end
+			end,
+			highlight = 'DiagnosticErrorRightBracket',
+		}
+	},
+	{
 		DiagnosticError = {
 			provider = function()
 				local result = diag.get_diagnostic_error()
@@ -345,7 +358,7 @@ gls.right = {
 		}
 	},
 	{
-		DiagnosticErrorRightBracket = {
+		DiagnosticErrorLeftBracket = {
 			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_error),
 			highlight = 'DiagnosticErrorRightBracket',
 		}
