@@ -171,19 +171,35 @@ gls.left = {
 				return '  ' .. label .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
-			separator = icons.arrow_right_filled,
+			separator = icons.arrow_right_filled .. ' ',
 			separator_highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
-		GitRoot = {
-			provider = utils.get_git_root,
-			condition = condition.buffer_not_empty,
-			icon = '  ',
+		GitIcon = {
+			provider = function() return ' ' end,
+			condition = condition.check_git_workspace,
+			highlight = 'GalaxyViModeNested',
+		}
+	},
+	{
+		GitBranch = {
+			provider = function()
+				local vcs = require('galaxyline.provider_vcs')
+				local branch_name = vcs.get_git_branch()
+				if (not branch_name) then
+					return ' no git '
+				end
+				if (string.len(branch_name) > 28) then
+					return string.sub(branch_name, 1, 25)..'...'
+				end
+				return branch_name .. ' '
+			end,
+			condition = condition.check_git_workspace,
 			highlight = 'GalaxyViModeNested',
 			separator = icons.arrow_right .. ' ',
 			separator_highlight = 'GalaxyViModeNested',
-		},
+		}
 	},
 	{
 		FileIcon = {
@@ -195,7 +211,7 @@ gls.left = {
 	{
 		FilePath = {
 			provider = FilePathShortProvider,
-			condition = condition.buffer_not_empty,
+			condition = condition.check_git_workspace,
 			highlight = 'GalaxyViModeNested',
 		},
 	},
@@ -336,33 +352,17 @@ gls.right = {
 			provider = function()
 				return icons.arrow_left_filled
 			end,
-			condition = condition.hide_in_width,
+			--condition = condition.check_git_workspace,
 			highlight = 'GalaxyViModeNestedInv',
 		}
 	},
 	{
-		GitIcon = {
-			provider = function() return '  ' end,
-			condition = condition.check_git_workspace,
+		GitRoot = {
+			provider = utils.get_git_root,
+			condition = condition.buffer_not_empty,
+			icon = '   ',
 			highlight = 'GalaxyViModeNested',
-		}
-	},
-	{
-		GitBranch = {
-			provider = function()
-				local vcs = require('galaxyline.provider_vcs')
-				local branch_name = vcs.get_git_branch()
-				if (not branch_name) then
-					return ''
-				end
-				if (string.len(branch_name) > 28) then
-					return string.sub(branch_name, 1, 25)..'...'
-				end
-				return branch_name .. ' '
-			end,
-			condition = condition.check_git_workspace,
-			highlight = 'GalaxyViModeNested',
-		}
+		},
 	},
 	{
 		LineColumn = {
