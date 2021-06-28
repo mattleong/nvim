@@ -6,6 +6,7 @@ cmd [[
 	syntax enable
 	filetype plugin indent on
 	autocmd BufWritePre * :%s/\s\+$//e
+	set termguicolors
 ]]
 
 -- misc
