@@ -125,7 +125,7 @@ gls.left = {
 			provider = function()
 				return icons.rounded_left_filled
 			end,
-			highlight = 'GalaxyGhostBracket'
+			highlight = 'GalaxyBracketNestedInv'
 		}
 	},
 	{
@@ -134,29 +134,21 @@ gls.left = {
 				function()
 					local label, mode_color, mode_nested = unpack(get_mode())
 					highlight('GalaxyGhost', mode_nested, mode_color, 'bold')
-					highlight('GalaxyGhostBracket', colors.bg, mode_nested, 'bold')
-					return icons.ghost
+					highlight('GalaxyGhostBracket', mode_color, colors.bg, 'bold')
+					return icons.ghost .. ' '
 				end,
 			},
 			highlight = 'GalaxyGhost',
 		},
 	},
 	{
-		GhostRightBracket = {
-			provider = function()
-				return icons.rounded_right_filled
-			end,
-			highlight = 'GalaxyGhostBracket'
-		}
-	},
-	{
 		ViModeLeftBracket = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
-				highlight('GalaxyViModeBracket', colors.bg, mode_color, 'bold')
-				return icons.rounded_left_filled
+				highlight('GalaxyViModeLeftBracket', mode_color, mode_nested, 'bold')
+				return icons.arrow_right_filled
 			end,
-			highlight = 'GalaxyViModeBracket',
+			highlight = 'GalaxyViModeLeftBracket',
 		},
 	},
 	{
@@ -168,8 +160,11 @@ gls.left = {
 				highlight('GalaxyViModeInv', mode_nested, mode_color, 'bold')
 				highlight('GalaxyViModeNested', mode_nested, colors.bg, 'bold')
 				highlight('GalaxyViModeNestedInv', colors.bg, mode_nested, 'bold')
+				highlight('GalaxyBracket', colors.bg, mode_color, 'bold')
+				highlight('GalaxyBracketNested', mode_nested, colors.bg, 'bold')
+				highlight('GalaxyBracketNestedInv', colors.bg, mode_nested, 'bold')
 
-				return label .. ' '
+				return '  ' .. label .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
 			separator = icons.arrow_right_filled,
@@ -271,25 +266,35 @@ gls.right = {
 	{
 		DiagnosticInfoLeftBracket = {
 			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_info),
-			highlight = 'NVDiagnosticInfoInv',
+			highlight = 'DiagnosticInfoLeftBracket',
 		}
 	},
 	{
 		DiagnosticInfo = {
 			provider = function()
-				highlight('NVDiagnosticInfo', colors.blue, colors.bg, 'bold')
-				highlight('NVDiagnosticInfoInv', colors.bg, colors.blue,  'bold')
-				return diag.get_diagnostic_info()
+				local label, mode_color, mode_nested = unpack(get_mode())
+				local warn_result = diag.get_diagnostic_warn()
+				local error_result = diag.get_diagnostic_error()
+				local info_result = diag.get_diagnostic_info()
+
+				highlight('DiagnosticInfo', colors.blue, colors.bg, 'bold')
+				highlight('DiagnosticInfoLeftBracket', colors.bg, colors.blue, 'bold')
+				highlight('DiagnosticInfoRightBracket', colors.blue, mode_nested, 'bold')
+
+				if (info_result == '' or info_result == nil) then
+					return info_result
+				end
+				return info_result .. ' '
 			end,
 			icon = icons.info .. ' ',
-			highlight = 'NVDiagnosticInfo',
+			highlight = 'DiagnosticInfo',
 			condition = check_width_and_git,
 		}
 	},
 	{
 		DiagnosticInfoRightBracket = {
 			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_info),
-			highlight = 'NVDiagnosticInfo',
+			highlight = 'DiagnosticInfoRightBracket',
 		}
 	},
 	{
@@ -309,7 +314,7 @@ gls.right = {
 				highlight('DiagnosticWarnLeftBracket', colors.bg, colors.orange, 'bold')
 				highlight('DiagnosticWarnRightBracket', colors.orange, mode_nested, 'bold')
 
-				if (result == '' or result == nil) then
+				if (warn_result == '' or warn_result == nil) then
 					return warn_result
 				end
 				return warn_result .. ' '
@@ -327,30 +332,26 @@ gls.right = {
 	},
 	{
 		DiagnosticErrorRightBracket = {
-			provider = function()
-				local result = diag.get_diagnostic_warn()
-				local label, mode_color, mode_nested = unpack(get_mode())
-				if (result == '' or result == nil) then
-					highlight('DiagnosticErrorRightBracket', colors.bg, colors.red, 'bold')
-					return BracketProvider('arrow_left_filled', diag.get_diagnostic_error)()
-				end
-			end,
+			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_error),
 			highlight = 'DiagnosticErrorRightBracket',
 		}
 	},
 	{
 		DiagnosticError = {
 			provider = function()
-				local result = diag.get_diagnostic_error()
+				local error_result = diag.get_diagnostic_error()
+				local warn_result = diag.get_diagnostic_warn()
+				local info_result = diag.get_diagnostic_info()
 				local label, mode_color, mode_nested = unpack(get_mode())
 				highlight('NVDiagnosticError', colors.red, colors.bg, 'bold')
 				highlight('DiagnosticErrorRightBracket', colors.red, mode_nested, 'bold')
+				highlight('DiagnosticErrorLeftBracket', colors.red, colors.bg, 'bold')
 
-				if (result ~= '' and result ~= nil) then
+				if (error_result ~= '' and error_result ~= nil) then
 					highlight('DiagnosticWarnRightBracket', colors.orange, colors.red, 'bold')
 				end
 
-				return result
+				return error_result
 			end,
 			icon = icons.error .. ' ',
 			highlight = 'NVDiagnosticError',
@@ -360,7 +361,7 @@ gls.right = {
 	{
 		DiagnosticErrorLeftBracket = {
 			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_error),
-			highlight = 'DiagnosticErrorRightBracket',
+			highlight = 'DiagnosticErrorLeftBracket',
 		}
 	},
 	{
@@ -422,7 +423,7 @@ gls.right = {
 				local label, mode_color, mode_nested = unpack(get_mode())
 				return icons.rounded_right_filled
 			end,
-			highlight = 'GalaxyViModeBracket',
+			highlight = 'GalaxyBracket',
 		},
 	},
 }
