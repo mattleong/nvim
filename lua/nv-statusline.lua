@@ -78,7 +78,11 @@ local check_width_and_git = function()
 end
 
 local highlight = function(group, bg, fg, gui)
-	vim.api.nvim_command(string.format('hi %s guibg=%s guifg=%s gui=%s', group, bg, fg, gui))
+	if (gui ~= nil and gui ~= '') then
+		vim.api.nvim_command(string.format('hi %s guibg=%s guifg=%s gui=%s', group, bg, fg, gui))
+	else
+		vim.api.nvim_command(string.format('hi %s guibg=%s guifg=%s', group, bg, fg))
+	end
 end
 
 local FilePathShortProvider = function()
@@ -105,20 +109,19 @@ local PercentProvider = function()
 	return '☰' .. line_column
 end
 
-local BracketProvider = function(icon_type, callback)
+local BracketProvider = function(icon, condition)
 	return function()
-		local result = callback()
-		local icon = icons[icon_type]
+		local result
 
-		if (icon == nil) then
-			icon = icon_type
+		if (condition == true or condition == false) then
+			result = condition
+		else
+			result = condition()
 		end
 
 		if (result ~= nil and result ~= '') then
 			return icon
 		end
-
-		return ''
 	end
 end
 
@@ -127,9 +130,7 @@ galaxy.short_line_list = { 'coc-explorer', 'packer' }
 gls.left = {
 	{
 		GhostLeftBracket = {
-			provider = function()
-				return icons.rounded_left_filled
-			end,
+			provider = BracketProvider(icons.rounded_left_filled, true),
 			highlight = 'GalaxyBracketNestedInv'
 		}
 	},
@@ -138,7 +139,7 @@ gls.left = {
 			provider = {
 				function()
 					local label, mode_color, mode_nested = unpack(get_mode())
-					highlight('GalaxyGhost', mode_nested, mode_color, 'bold')
+					highlight('GalaxyGhost', mode_nested, mode_color)
 					return icons.ghost .. ' '
 				end,
 			},
@@ -149,7 +150,7 @@ gls.left = {
 		ViModeLeftBracket = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
-				highlight('GalaxyViModeLeftBracket', mode_color, mode_nested, 'bold')
+				highlight('GalaxyViModeLeftBracket', mode_color, mode_nested)
 				return icons.arrow_right_filled
 			end,
 			highlight = 'GalaxyViModeLeftBracket',
@@ -160,17 +161,16 @@ gls.left = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
 
-				highlight('GalaxyViMode', mode_color, colors.bg, 'bold')
-				highlight('GalaxyViModeInv', mode_nested, mode_color, 'bold')
-				highlight('GalaxyViModeNested', mode_nested, colors.bg, 'bold')
-				highlight('GalaxyViModeNestedInv', colors.bg, mode_nested, 'bold')
-				highlight('GalaxyBracket', colors.bg, mode_color, 'bold')
-				highlight('GalaxyBracketNested', mode_nested, colors.bg, 'bold')
-				highlight('GalaxyBracketNestedInv', colors.bg, mode_nested, 'bold')
+				highlight('GalaxyViMode', mode_color, colors.bg)
+				highlight('GalaxyViModeInv', mode_nested, mode_color)
+				highlight('GalaxyViModeNested', mode_nested, colors.bg)
+				highlight('GalaxyViModeNestedInv', colors.bg, mode_nested)
+				highlight('GalaxyBracket', colors.bg, mode_color)
+				highlight('GalaxyBracketNested', mode_nested, colors.bg)
+				highlight('GalaxyBracketNestedInv', colors.bg, mode_nested)
 
 				return '  ' .. label .. ' '
 			end,
-			highlight = { colors.bg, colors.bg, 'bold' },
 			separator = icons.arrow_right_filled .. ' ',
 			separator_highlight = 'GalaxyViModeInv',
 		},
@@ -249,13 +249,11 @@ gls.left = {
 		},
 	},
 }
--- order ltr
--- info, warn error
 
 gls.right = {
 	{
 		DiagnosticErrorLeftBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_error),
+			provider = BracketProvider(icons.rounded_left_filled, diag.get_diagnostic_error),
 			highlight = 'DiagnosticErrorInv',
 		}
 	},
@@ -264,8 +262,8 @@ gls.right = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
 				local error_result = diag.get_diagnostic_error()
-				highlight('DiagnosticError', colors.error, colors.bg, 'bold')
-				highlight('DiagnosticErrorInv', colors.bg, colors.error, 'bold')
+				highlight('DiagnosticError', colors.error, colors.bg)
+				highlight('DiagnosticErrorInv', colors.bg, colors.error)
 
 				if (error_result ~= '' and error_result ~= nil) then
 					return error_result
@@ -279,7 +277,7 @@ gls.right = {
 	{
 		DiagnosticErrorRightBracket = {
 			provider = {
-				BracketProvider('rounded_right_filled', diag.get_diagnostic_error),
+				BracketProvider(icons.rounded_right_filled, diag.get_diagnostic_error),
 				BracketProvider(' ', diag.get_diagnostic_error),
 			},
 			highlight = 'DiagnosticErrorInv',
@@ -287,7 +285,7 @@ gls.right = {
 	},
 	{
 		DiagnosticWarnLeftBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_warn),
+			provider = BracketProvider(icons.rounded_left_filled, diag.get_diagnostic_warn),
 			highlight = 'DiagnosticWarnInv',
 		}
 	},
@@ -295,8 +293,8 @@ gls.right = {
 		DiagnosticWarn = {
 			provider = function()
 				local warn_result = diag.get_diagnostic_warn()
-				highlight('DiagnosticWarn', colors.warn, colors.bg, 'bold')
-				highlight('DiagnosticWarnInv', colors.bg, colors.warn, 'bold')
+				highlight('DiagnosticWarn', colors.warn, colors.bg)
+				highlight('DiagnosticWarnInv', colors.bg, colors.warn)
 
 				if (warn_result ~= '' and warn_result ~= nil) then
 					return warn_result
@@ -310,7 +308,7 @@ gls.right = {
 	{
 		DiagnosticWarnRightBracket = {
 			provider = {
-				BracketProvider('rounded_right_filled', diag.get_diagnostic_warn),
+				BracketProvider(icons.rounded_right_filled, diag.get_diagnostic_warn),
 				BracketProvider(' ', diag.get_diagnostic_warn),
 			},
 			highlight = 'DiagnosticWarnInv',
@@ -318,7 +316,7 @@ gls.right = {
 	},
 	{
 		DiagnosticInfoLeftBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_info),
+			provider = BracketProvider(icons.rounded_left_filled, diag.get_diagnostic_info),
 			highlight = 'DiagnosticInfoInv',
 		}
 	},
@@ -326,8 +324,8 @@ gls.right = {
 		DiagnosticInfo = {
 			provider = function()
 				local info_result = diag.get_diagnostic_info()
-				highlight('DiagnosticInfo', colors.info, colors.bg, 'bold')
-				highlight('DiagnosticInfoInv', colors.bg, colors.info, 'bold')
+				highlight('DiagnosticInfo', colors.info, colors.bg)
+				highlight('DiagnosticInfoInv', colors.bg, colors.info)
 
 				if (info_result ~= '' and info_result ~= nil) then
 					return info_result
@@ -341,7 +339,7 @@ gls.right = {
 	{
 		DiagnosticInfoRightBracket = {
 			provider = {
-				BracketProvider('rounded_right_filled', diag.get_diagnostic_info),
+				BracketProvider(icons.rounded_right_filled, diag.get_diagnostic_info),
 				BracketProvider(' ', diag.get_diagnostic_info),
 			},
 			highlight = 'DiagnosticInfoInv',
@@ -349,10 +347,7 @@ gls.right = {
 	},
 	{
 		GitBranchRightBracket = {
-			provider = function()
-				return icons.arrow_left_filled
-			end,
-			--condition = condition.check_git_workspace,
+			provider = BracketProvider(icons.arrow_left_filled, true),
 			highlight = 'GalaxyViModeNestedInv',
 		}
 	},
@@ -388,10 +383,7 @@ gls.right = {
 	},
 	{
 		PercentRightBracket = {
-			provider = function()
-				local label, mode_color, mode_nested = unpack(get_mode())
-				return icons.rounded_right_filled
-			end,
+			provider = BracketProvider(icons.rounded_right_filled, true),
 			highlight = 'GalaxyBracket',
 		},
 	},
