@@ -79,7 +79,6 @@ end
 
 local highlight = function(group, bg, fg, gui)
 	vim.api.nvim_command(string.format('hi %s guibg=%s guifg=%s gui=%s', group, bg, fg, gui))
-	vim.api.nvim_command(string.format('hi %sInv guibg=%s guifg=%s gui=%s', group, fg, bg, gui))
 end
 
 local FilePathShortProvider = function()
@@ -122,16 +121,33 @@ galaxy.short_line_list = { 'coc-explorer', 'packer' }
 
 gls.left = {
 	{
+		GhostLeftBracket = {
+			provider = function()
+				return icons.rounded_left_filled
+			end,
+			highlight = 'GalaxyGhostBracket'
+		}
+	},
+	{
 		Ghost = {
 			provider = {
 				function()
 					local label, mode_color, mode_nested = unpack(get_mode())
-					highlight('GalaxyGhost', colors.bg, mode_color, 'bold')
-					return '  ' .. icons.ghost .. ' '
+					highlight('GalaxyGhost', mode_nested, mode_color, 'bold')
+					highlight('GalaxyGhostBracket', colors.bg, mode_nested, 'bold')
+					return icons.ghost
 				end,
 			},
 			highlight = 'GalaxyGhost',
 		},
+	},
+	{
+		GhostRightBracket = {
+			provider = function()
+				return icons.rounded_right_filled
+			end,
+			highlight = 'GalaxyGhostBracket'
+		}
 	},
 	{
 		ViModeLeftBracket = {
@@ -153,7 +169,7 @@ gls.left = {
 				highlight('GalaxyViModeNested', mode_nested, colors.bg, 'bold')
 				highlight('GalaxyViModeNestedInv', colors.bg, mode_nested, 'bold')
 
-				return '  ' .. label .. ' '
+				return label .. ' '
 			end,
 			highlight = { colors.bg, colors.bg, 'bold' },
 			separator = icons.arrow_right_filled,
