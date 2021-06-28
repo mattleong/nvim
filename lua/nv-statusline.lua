@@ -391,21 +391,6 @@ gls.right = {
 
 gls.short_line_left = {
 	{
-		FileNameShort = {
-			provider = 'FileName',
-			condition = condition.buffer_not_empty,
-			highlight = { colors.white, colors.bg },
-		},
-	},
-	{
-		GitRootShort = {
-			provider = utils.get_git_root,
-			condition = condition.buffer_not_empty,
-			icon = ' ',
-			highlight = { colors.white, colors.bg },
-		},
-	},
-	{
 		FileIconShort = {
 			provider = {
 				function() return '  ' end,
@@ -425,5 +410,22 @@ gls.short_line_left = {
 			highlight = { colors.white, colors.bg },
 		},
 	},
+	{
+		FileNameShort = {
+			provider = 'FileName',
+			condition = condition.buffer_not_empty,
+			highlight = { colors.white, colors.bg },
+		},
+	},
 }
 
+gls.short_line_right = {
+	{
+		GitRootShort = {
+			provider = utils.get_git_root,
+			condition = condition.buffer_not_empty,
+			icon = '   ',
+			highlight = { colors.bg, colors.white },
+		},
+	},
+}
