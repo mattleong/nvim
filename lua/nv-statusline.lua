@@ -295,26 +295,26 @@ gls.right = {
 	{
 		DiagnosticWarnLeftBracket = {
 			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_warn),
-			highlight = 'NVDiagnosticWarnInv',
+			highlight = 'DiagnosticWarnLeftBracket',
 		}
 	},
 	{
 		DiagnosticWarn = {
 			provider = function()
 				local label, mode_color, mode_nested = unpack(get_mode())
-				local result = diag.get_diagnostic_warn()
-				highlight('NVDiagnosticWarn', colors.orange, colors.bg, 'bold')
-				highlight('NVDiagnosticWarnInv', colors.bg, colors.orange, 'bold')
-
+				local warn_result = diag.get_diagnostic_warn()
+				local error_result = diag.get_diagnostic_error()
+				local info_result = diag.get_diagnostic_info()
+				highlight('DiagnosticWarn', colors.orange, colors.bg, 'bold')
+				highlight('DiagnosticWarnLeftBracket', colors.bg, colors.orange, 'bold')
 				highlight('DiagnosticWarnRightBracket', colors.orange, mode_nested, 'bold')
 
 				if (result == '' or result == nil) then
-					return result
+					return warn_result
 				end
-
-				return result .. ' '
+				return warn_result .. ' '
 			end,
-			highlight = 'NVDiagnosticWarn',
+			highlight = 'DiagnosticWarn',
 			icon = '  ' .. icons.warn .. ' ',
 			condition = check_width_and_git,
 		}
@@ -326,17 +326,18 @@ gls.right = {
 		}
 	},
 	{
-		DiagnosticErrorLeftBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_error),
-			highlight = 'NVDiagnosticErrorInv',
-		}
-	},
-	{
 		DiagnosticError = {
 			provider = function()
+				local result = diag.get_diagnostic_error()
+				local label, mode_color, mode_nested = unpack(get_mode())
 				highlight('NVDiagnosticError', colors.red, colors.bg, 'bold')
-				highlight('NVDiagnosticErrorInv', colors.bg, colors.red, 'bold')
-				return diag.get_diagnostic_error()
+				highlight('DiagnosticErrorRightBracket', colors.red, mode_nested, 'bold')
+
+				if (result ~= '' and result ~= nil) then
+					highlight('DiagnosticWarnRightBracket', colors.orange, colors.red, 'bold')
+				end
+
+				return result
 			end,
 			icon = icons.error .. ' ',
 			highlight = 'NVDiagnosticError',
@@ -345,8 +346,8 @@ gls.right = {
 	},
 	{
 		DiagnosticErrorRightBracket = {
-			provider = BracketProvider('rounded_left_filled', diag.get_diagnostic_error),
-			highlight = 'NVDiagnosticError',
+			provider = BracketProvider('arrow_left_filled', diag.get_diagnostic_error),
+			highlight = 'DiagnosticErrorRightBracket',
 		}
 	},
 	{
