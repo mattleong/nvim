@@ -218,7 +218,7 @@ gls.left = {
 	{
 		FileName = {
 			provider = 'FileName',
-			condition = condition.buffer_not_empty,
+			condition = condition.check_git_workspace,
 			highlight = 'GalaxyViModeNested',
 			separator = icons.arrow_right_filled,
 			separator_highlight = 'GalaxyViModeNestedInv',
@@ -248,6 +248,12 @@ gls.left = {
 			highlight = { colors.error, colors.bg },
 		},
 	},
+	{
+		WSpace = {
+			provider = 'WhiteSpace',
+			highlight = { colors.bg, colors.bg },
+		}
+	}
 }
 
 gls.right = {
