@@ -59,17 +59,15 @@ end
 
 local function split(str, sep)
 	local res = {}
-	local n = 1
 	for w in str:gmatch('([^' .. sep .. ']*)') do
-		res[n] = res[n] or w -- only set once (so the blank after a string is ignored)
-		if w == '' then
-			n = n + 1
-		end -- step forwards on a blank but not a string
+		if w ~= '' then
+			table.insert(res, w)
+		end
 	end
 	return res
 end
 
-local check_width_and_git = function()
+local check_width_and_git_and_buffer = function()
 	return condition.hide_in_width() and condition.check_git_workspace() and condition.buffer_not_empty()
 end
 
@@ -86,7 +84,7 @@ local FilePathShortProvider = function()
 	local tbl = split(fp, '/')
 	local len = #tbl
 
-	if len > 2 and not len == 3 and not tbl[0] == '~' then
+	if len > 2 and tbl[1] ~= '~' then
 		return '…/' .. table.concat(tbl, '/', len - 1) .. '/'
 	else
 		return fp .. '/'
@@ -166,7 +164,7 @@ gls.left = {
 	{
 		GitIcon = {
 			provider = BracketProvider('  ' .. icons.branch .. ' ', true),
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			highlight = 'GalaxyViModeInv',
 		}
 	},
@@ -183,7 +181,7 @@ gls.left = {
 				end
 				return branch_name .. ' '
 			end,
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			highlight = 'GalaxyViModeInv',
 			separator = icons.arrow_right .. ' ',
 			separator_highlight = 'GalaxyViModeInv',
@@ -192,21 +190,21 @@ gls.left = {
 	{
 		FileIcon = {
 			provider = 'FileIcon',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
 		FilePath = {
 			provider = FilePathShortProvider,
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			highlight = 'GalaxyViModeInv',
 		},
 	},
 	{
 		FileName = {
 			provider = 'FileName',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			highlight = 'GalaxyViModeInv',
 			separator = icons.arrow_right_filled,
 			separator_highlight = 'GalaxyViModeNestedInv',
@@ -216,14 +214,14 @@ gls.left = {
 		DiffAdd = {
 			provider = 'DiffAdd',
 			icon = '  ',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			highlight = { colors.green, colors.bg },
 		},
 	},
 	{
 		DiffModified = {
 			provider = 'DiffModified',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			icon = '  ',
 			highlight = { colors.warn, colors.bg },
 		},
@@ -231,7 +229,7 @@ gls.left = {
 	{
 		DiffRemove = {
 			provider = 'DiffRemove',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 			icon = '  ',
 			highlight = { colors.error, colors.bg },
 		},
@@ -265,7 +263,7 @@ gls.right = {
 			end,
 			icon = icons.error .. ' ',
 			highlight = 'DiagnosticError',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 		}
 	},
 	{
@@ -296,7 +294,7 @@ gls.right = {
 			end,
 			highlight = 'DiagnosticWarn',
 			icon = icons.warn .. ' ',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 		}
 	},
 	{
@@ -327,7 +325,7 @@ gls.right = {
 			end,
 			icon = icons.info .. ' ',
 			highlight = 'DiagnosticInfo',
-			condition = check_width_and_git,
+			condition = check_width_and_git_and_buffer,
 		}
 	},
 	{
